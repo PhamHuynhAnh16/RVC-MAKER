@@ -4,7 +4,7 @@
         "en-US",
         "id_Id",
         "ja-JP",
-        "vi-VN",
+        "vi-VN"
     ],
     "theme": "gradio/default",
     "themes": [
