@@ -1,7 +1,9 @@
 import gradio as gr
+
+import sys, os
+
+sys.path.append(os.getcwd())
 from main.app.based.utils import *
-
-
 
 with gr.Blocks(title=" Ultimate RVC Maker ⚡", theme=theme) as app:
     gr.HTML("<h1 style='text-align: center;'>Ultimate RVC Maker ⚡</h1>")
