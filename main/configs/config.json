@@ -6,7 +6,7 @@
         "ja-JP",
         "vi-VN",
     ],
-    "theme": "default",
+    "theme": "gradio/default",
     "themes": [
         "NoCrypt/miku",
         "gstaff/xkcd",
