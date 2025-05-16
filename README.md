@@ -1,6 +1,6 @@
 <div align="center">
 <img alt="LOGO" src="assets/ico.png" width="300" height="300" /><div align="center">
-  <img src="https://count.nett.moe/get/foo/img?theme=gelbooru" alt="Gelbooru counter"></div>
+  <img src="https://count.nett.moe/get/foo/img?theme=rule34" alt="yeh"></div>
 
 </div>
   
