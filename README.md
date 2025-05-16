@@ -18,7 +18,7 @@ A high-quality voice conversion tool focused on ease of use and performance.
 </div>
 
 # Description
-This project is a simple, easy-to-use voice conversion tool designed for Vietnamese users. With the goal of creating high-quality and high-performance voice conversion products, the project allows users to change voices smoothly and naturally.
+This project is a simple, easy-to-use voice conversion tool. With the goal of creating high-quality and high-performance voice conversion products, the project allows users to change voices smoothly and naturally.
 
 # Project Features
 
