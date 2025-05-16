@@ -4,9 +4,9 @@
         "en-US",
         "id_Id",
         "ja-JP",
-        "vi-VN"
+        "vi-VN",
     ],
-    "theme": "gradio/base",
+    "theme": "default",
     "themes": [
         "NoCrypt/miku",
         "gstaff/xkcd",
