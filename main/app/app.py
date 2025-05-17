@@ -78,6 +78,7 @@ with gr.Blocks(title=" Ultimate RVC Maker ⚡", theme=theme) as app:
                     with gr.Row():
                         clean_strength = gr.Slider(label=translations["clean_strength"], info=translations["clean_strength_info"], minimum=0, maximum=1, value=0.5, step=0.1, interactive=True, visible=cleaner.value)
                         sample_rate1 = gr.Slider(minimum=8000, maximum=96000, step=1, value=44100, label=translations["sr"], info=translations["sr_info"], interactive=True)
+                with gr.Row(): 
                     with gr.Accordion(translations["input_output"], open=False):
                         format = gr.Radio(label=translations["export_format"], info=translations["export_info"], choices=["wav", "mp3", "flac", "ogg", "opus", "m4a", "mp4", "aac", "alac", "wma", "aiff", "webm", "ac3"], value="wav", interactive=True)
                         input_audio = gr.Dropdown(label=translations["audio_path"], value="", choices=paths_for_files, allow_custom_value=True, interactive=True)
@@ -158,6 +159,7 @@ with gr.Blocks(title=" Ultimate RVC Maker ⚡", theme=theme) as app:
                 with gr.Column():
                     with gr.Row():
                         index_strength = gr.Slider(label=translations["index_strength"], info=translations["index_strength_info"], minimum=0, maximum=1, value=0.5, step=0.01, interactive=True, visible=model_index.value != "")
+            with gr.Row(): 
                 with gr.Column():
                     with gr.Accordion(translations["input_output"], open=False):
                         with gr.Column():
