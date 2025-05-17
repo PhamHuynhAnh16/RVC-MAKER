@@ -179,6 +179,6 @@ This document provides detailed information on the pitch extraction methods used
 # Bug Reporting
 
 - **If you encounter an error while using this source code, I sincerely apologize for the poor experience. You can report the bug using the methods below.**
-- **You can report bugs to me via the webhook bug reporting system in the user interface.**
-- **If the bug reporting system is not working, you can report bugs to us via [ISSUE](https://github.com/unchCrew/RVC-MAKER/issues).**
+
+- **you can report bugs to us via [ISSUE](https://github.com/unchCrew/RVC-MAKER/issues).**
 
