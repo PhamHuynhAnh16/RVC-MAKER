@@ -150,10 +150,11 @@ with gr.Blocks(title=" Ultimate RVC Maker ⚡", theme=theme) as app:
                 with gr.Column():
                     audio_select = gr.Dropdown(label=translations["select_separate"], choices=[], value="", interactive=True, allow_custom_value=True, visible=False)
                     convert_button_2 = gr.Button(translations["convert_audio"], visible=False)
-                            
+            with gr.Row(): 
                 with gr.Column():
                     input0 = gr.File(label=translations["drop_audio"], file_types=[".wav", ".mp3", ".flac", ".ogg", ".opus", ".m4a", ".mp4", ".aac", ".alac", ".wma", ".aiff", ".webm", ".ac3"])  
                     play_audio = gr.Audio(show_download_button=True, interactive=False, label=translations["input_audio"])
+            with gr.Row(): 
                 with gr.Column():
                     with gr.Row():
                         index_strength = gr.Slider(label=translations["index_strength"], info=translations["index_strength_info"], minimum=0, maximum=1, value=0.5, step=0.01, interactive=True, visible=model_index.value != "")
