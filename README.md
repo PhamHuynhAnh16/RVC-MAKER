@@ -66,9 +66,6 @@ This project is all in one, easy-to-use voice conversion tool. With the goal of 
 
 **SPIN_EMBEDDERS**: A new embedding extraction model that may provide higher quality than older extractions
 
-# Usage Instructions
-
-**Will be provided if I’m truly free...**
 
 # Installation and Usage
 
