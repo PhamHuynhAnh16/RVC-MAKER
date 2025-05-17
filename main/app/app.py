@@ -68,23 +68,28 @@ with gr.Blocks(title=" Ultimate RVC Maker ⚡", theme=theme) as app:
                             overlap = gr.Radio(label=translations["overlap"], info=translations["overlap_info"], choices=["0.25", "0.5", "0.75", "0.99"], value="0.25", interactive=True)
                         with gr.Row():
                             mdx_hop_length = gr.Slider(label="Hop length", info=translations["hop_length_info"], minimum=1, maximum=8192, value=1024, step=1, interactive=True, visible=backing.value or reverb.value or separator_model.value in mdx_model)
-            with gr.Row():
-                with gr.Column():
-                    input = gr.File(label=translations["drop_audio"], file_types=[".wav", ".mp3", ".flac", ".ogg", ".opus", ".m4a", ".mp4", ".aac", ".alac", ".wma", ".aiff", ".webm", ".ac3"])    
-                    with gr.Accordion(translations["use_url"], open=False):
-                        url = gr.Textbox(label=translations["url_audio"], value="", placeholder="https://www.youtube.com/...", scale=6)
-                        download_button = gr.Button(translations["downloads"])
+
+                
                 with gr.Column():
                     with gr.Row():
                         clean_strength = gr.Slider(label=translations["clean_strength"], info=translations["clean_strength_info"], minimum=0, maximum=1, value=0.5, step=0.1, interactive=True, visible=cleaner.value)
                         sample_rate1 = gr.Slider(minimum=8000, maximum=96000, step=1, value=44100, label=translations["sr"], info=translations["sr_info"], interactive=True)
-                with gr.Row(): 
-                    with gr.Accordion(translations["input_output"], open=False):
-                        format = gr.Radio(label=translations["export_format"], info=translations["export_info"], choices=["wav", "mp3", "flac", "ogg", "opus", "m4a", "mp4", "aac", "alac", "wma", "aiff", "webm", "ac3"], value="wav", interactive=True)
-                        input_audio = gr.Dropdown(label=translations["audio_path"], value="", choices=paths_for_files, allow_custom_value=True, interactive=True)
-                        refesh_separator = gr.Button(translations["refesh"])
-                        output_separator = gr.Textbox(label=translations["output_folder"], value="audios", placeholder="audios", info=translations["output_folder_info"], interactive=True)
+                
+                with gr.Column():
+                    input = gr.File(label=translations["drop_audio"], file_types=[".wav", ".mp3", ".flac", ".ogg", ".opus", ".m4a", ".mp4", ".aac", ".alac", ".wma", ".aiff", ".webm", ".ac3"]) 
                     audio_input = gr.Audio(show_download_button=True, interactive=False, label=translations["input_audio"])
+            with gr.Column():
+                with gr.Accordion(translations["use_url"], open=False):
+                    url = gr.Textbox(label=translations["url_audio"], value="", placeholder="https://www.youtube.com/...", scale=6)
+                    download_button = gr.Button(translations["downloads"])
+            
+            with gr.Column():
+                with gr.Accordion(translations["input_output"], open=False):
+                    format = gr.Radio(label=translations["export_format"], info=translations["export_info"], choices=["wav", "mp3", "flac", "ogg", "opus", "m4a", "mp4", "aac", "alac", "wma", "aiff", "webm", "ac3"], value="wav", interactive=True)
+                    input_audio = gr.Dropdown(label=translations["audio_path"], value="", choices=paths_for_files, allow_custom_value=True, interactive=True)
+                    refesh_separator = gr.Button(translations["refesh"])
+                output_separator = gr.Textbox(label=translations["output_folder"], value="audios", placeholder="audios", info=translations["output_folder_info"], interactive=True)
+                
             with gr.Row():
                 gr.Markdown(translations["output_separator"])
             with gr.Row():
@@ -146,6 +151,7 @@ with gr.Blocks(title=" Ultimate RVC Maker ⚡", theme=theme) as app:
                             model_pth = gr.Dropdown(label=translations["model_name"], choices=model_name, value=model_name[0] if len(model_name) >= 1 else "", interactive=True, allow_custom_value=True)
                             model_index = gr.Dropdown(label=translations["index_path"], choices=index_path, value=index_path[0] if len(index_path) >= 1 else "", interactive=True, allow_custom_value=True)
                         refesh = gr.Button(translations["refesh"])
+                    
                     
             with gr.Row(): 
                 with gr.Column():
@@ -432,6 +438,474 @@ with gr.Blocks(title=" Ultimate RVC Maker ⚡", theme=theme) as app:
                     api_name="convert_audio"
                 )
 
+
+        with gr.TabItem(translations["convert_text"], visible=configs.get("tts_tab", True)):
+            gr.Markdown(translations["convert_text_markdown"])
+            with gr.Row():
+                gr.Markdown(translations["convert_text_markdown_2"])
+            with gr.Accordion(translations["model_accordion"], open=True):
+                with gr.Row():
+                    model_pth0 = gr.Dropdown(label=translations["model_name"], choices=model_name, value=model_name[0] if len(model_name) >= 1 else "", interactive=True, allow_custom_value=True)
+                    model_index0 = gr.Dropdown(label=translations["index_path"], choices=index_path, value=index_path[0] if len(index_path) >= 1 else "", interactive=True, allow_custom_value=True)
+                        
+            with gr.Row():
+                with gr.Column():
+                    with gr.Group():
+                        with gr.Row():
+                            use_txt = gr.Checkbox(label=translations["input_txt"], value=False, interactive=True)
+                            google_tts_check_box = gr.Checkbox(label=translations["googletts"], value=False, interactive=True)
+                        prompt = gr.Textbox(label=translations["text_to_speech"], value="", placeholder="Hello Words", lines=3)
+                with gr.Column():
+                    speed = gr.Slider(label=translations["voice_speed"], info=translations["voice_speed_info"], minimum=-100, maximum=100, value=0, step=1)
+                    pitch0 = gr.Slider(minimum=-20, maximum=20, step=1, info=translations["pitch_info"], label=translations["pitch"], value=0, interactive=True)
+            with gr.Row():
+                tts_button = gr.Button(translations["tts_1"], variant="primary", scale=2)
+                convert_button0 = gr.Button(translations["tts_2"], variant="secondary", scale=2)
+            with gr.Row():
+                with gr.Column():
+                    txt_input = gr.File(label=translations["drop_text"], file_types=[".txt", ".srt"], visible=use_txt.value)  
+                    tts_voice = gr.Dropdown(label=translations["voice"], choices=edgetts, interactive=True, value="vi-VN-NamMinhNeural")
+                    tts_pitch = gr.Slider(minimum=-20, maximum=20, step=1, info=translations["pitch_info_2"], label=translations["pitch"], value=0, interactive=True)
+                with gr.Column():
+                    refesh1 = gr.Button(translations["refesh"])
+                    with gr.Row():
+                        index_strength0 = gr.Slider(label=translations["index_strength"], info=translations["index_strength_info"], minimum=0, maximum=1, value=0.5, step=0.01, interactive=True, visible=model_index0.value != "")
+                    with gr.Accordion(translations["output_path"], open=False):
+                        export_format0 = gr.Radio(label=translations["export_format"], info=translations["export_info"], choices=["wav", "mp3", "flac", "ogg", "opus", "m4a", "mp4", "aac", "alac", "wma", "aiff", "webm", "ac3"], value="wav", interactive=True)
+                        output_audio0 = gr.Textbox(label=translations["output_tts"], value="audios/tts.wav", placeholder="audios/tts.wav", info=translations["tts_output"], interactive=True)
+                        output_audio1 = gr.Textbox(label=translations["output_tts_convert"], value="audios/tts-convert.wav", placeholder="audios/tts-convert.wav", info=translations["tts_output"], interactive=True)
+                    with gr.Accordion(translations["setting"], open=False):
+                        with gr.Accordion(translations["f0_method"], open=False):
+                            with gr.Group():
+                                with gr.Row():
+                                    onnx_f0_mode1 = gr.Checkbox(label=translations["f0_onnx_mode"], info=translations["f0_onnx_mode_info"], value=False, interactive=True)
+                                    unlock_full_method3 = gr.Checkbox(label=translations["f0_unlock"], info=translations["f0_unlock_info"], value=False, interactive=True)
+                                method0 = gr.Radio(label=translations["f0_method"], info=translations["f0_method_info"], choices=method_f0+["hybrid"], value="rmvpe", interactive=True)
+                                hybrid_method0 = gr.Dropdown(label=translations["f0_method_hybrid"], info=translations["f0_method_hybrid_info"], choices=["hybrid[pm+dio]", "hybrid[pm+crepe-tiny]", "hybrid[pm+crepe]", "hybrid[pm+fcpe]", "hybrid[pm+rmvpe]", "hybrid[pm+harvest]", "hybrid[pm+yin]", "hybrid[dio+crepe-tiny]", "hybrid[dio+crepe]", "hybrid[dio+fcpe]", "hybrid[dio+rmvpe]", "hybrid[dio+harvest]", "hybrid[dio+yin]", "hybrid[crepe-tiny+crepe]", "hybrid[crepe-tiny+fcpe]", "hybrid[crepe-tiny+rmvpe]", "hybrid[crepe-tiny+harvest]", "hybrid[crepe+fcpe]", "hybrid[crepe+rmvpe]", "hybrid[crepe+harvest]", "hybrid[crepe+yin]", "hybrid[fcpe+rmvpe]", "hybrid[fcpe+harvest]", "hybrid[fcpe+yin]", "hybrid[rmvpe+harvest]", "hybrid[rmvpe+yin]", "hybrid[harvest+yin]"], value="hybrid[pm+dio]", interactive=True, allow_custom_value=True, visible=method0.value == "hybrid")
+                            hop_length0 = gr.Slider(label="Hop length", info=translations["hop_length_info"], minimum=1, maximum=512, value=128, step=1, interactive=True, visible=False)
+                        with gr.Accordion(translations["f0_file"], open=False):
+                            upload_f0_file0 = gr.File(label=translations["upload_f0"], file_types=[".txt"])  
+                            f0_file_dropdown0 = gr.Dropdown(label=translations["f0_file_2"], value="", choices=f0_file, allow_custom_value=True, interactive=True)
+                            refesh_f0_file0 = gr.Button(translations["refesh"])
+                        with gr.Accordion(translations["hubert_model"], open=False):
+                            embed_mode1 = gr.Radio(label=translations["embed_mode"], info=translations["embed_mode_info"], value="fairseq", choices=embedders_mode, interactive=True, visible=True)
+                            embedders0 = gr.Radio(label=translations["hubert_model"], info=translations["hubert_info"], choices=embedders_model, value="hubert_base", interactive=True)
+                            custom_embedders0 = gr.Textbox(label=translations["modelname"], info=translations["modelname_info"], value="", placeholder="hubert_base", interactive=True, visible=embedders0.value == "custom")
+                        with gr.Group():
+                            with gr.Row():
+                                formant_shifting1 = gr.Checkbox(label=translations["formantshift"], value=False, interactive=True)  
+                                split_audio0 = gr.Checkbox(label=translations["split_audio"], value=False, interactive=True)   
+                                cleaner1 = gr.Checkbox(label=translations["clear_audio"], value=False, interactive=True)     
+                                autotune3 = gr.Checkbox(label=translations["autotune"], value=False, interactive=True) 
+                                checkpointing0 = gr.Checkbox(label=translations["memory_efficient_training"], value=False, interactive=True)         
+                        with gr.Column():
+                            f0_autotune_strength0 = gr.Slider(minimum=0, maximum=1, label=translations["autotune_rate"], info=translations["autotune_rate_info"], value=1, step=0.1, interactive=True, visible=autotune3.value)
+                            clean_strength1 = gr.Slider(label=translations["clean_strength"], info=translations["clean_strength_info"], minimum=0, maximum=1, value=0.5, step=0.1, interactive=True, visible=cleaner1.value)
+                            resample_sr0 = gr.Slider(minimum=0, maximum=96000, label=translations["resample"], info=translations["resample_info"], value=0, step=1, interactive=True)
+                            filter_radius0 = gr.Slider(minimum=0, maximum=7, label=translations["filter_radius"], info=translations["filter_radius_info"], value=3, step=1, interactive=True)
+                            volume_envelope0 = gr.Slider(minimum=0, maximum=1, label=translations["volume_envelope"], info=translations["volume_envelope_info"], value=1, step=0.1, interactive=True)
+                            protect0 = gr.Slider(minimum=0, maximum=1, label=translations["protect"], info=translations["protect_info"], value=0.5, step=0.01, interactive=True)
+                        with gr.Row():
+                            formant_qfrency1 = gr.Slider(value=1.0, label=translations["formant_qfrency"], info=translations["formant_qfrency"], minimum=0.0, maximum=16.0, step=0.1, interactive=True, visible=False)
+                            formant_timbre1 = gr.Slider(value=1.0, label=translations["formant_timbre"], info=translations["formant_timbre"], minimum=0.0, maximum=16.0, step=0.1, interactive=True, visible=False)
+            with gr.Row():
+                gr.Markdown(translations["output_tts_markdown"])
+            with gr.Row():
+                tts_voice_audio = gr.Audio(show_download_button=True, interactive=False, label=translations["output_text_to_speech"])
+                tts_voice_convert = gr.Audio(show_download_button=True, interactive=False, label=translations["output_file_tts_convert"])
+            with gr.Row():
+                unlock_full_method3.change(fn=unlock_f0, inputs=[unlock_full_method3], outputs=[method0])
+                upload_f0_file0.upload(fn=lambda inp: shutil.move(inp.name, os.path.join("assets", "f0")), inputs=[upload_f0_file0], outputs=[f0_file_dropdown0])
+                refesh_f0_file0.click(fn=change_f0_choices, inputs=[], outputs=[f0_file_dropdown0])
+            with gr.Row():
+                embed_mode1.change(fn=visible_embedders, inputs=[embed_mode1], outputs=[embedders0])
+                autotune3.change(fn=visible, inputs=[autotune3], outputs=[f0_autotune_strength0])
+                model_pth0.change(fn=get_index, inputs=[model_pth0], outputs=[model_index0])
+            with gr.Row():
+                cleaner1.change(fn=visible, inputs=[cleaner1], outputs=[clean_strength1])
+                method0.change(fn=lambda method, hybrid: [visible(method == "hybrid"), hoplength_show(method, hybrid)], inputs=[method0, hybrid_method0], outputs=[hybrid_method0, hop_length0])
+                hybrid_method0.change(fn=hoplength_show, inputs=[method0, hybrid_method0], outputs=[hop_length0])
+            with gr.Row():
+                refesh1.click(fn=change_models_choices, inputs=[], outputs=[model_pth0, model_index0])
+                embedders0.change(fn=lambda embedders: visible(embedders == "custom"), inputs=[embedders0], outputs=[custom_embedders0])
+                formant_shifting1.change(fn=lambda a: [visible(a)]*2, inputs=[formant_shifting1], outputs=[formant_qfrency1, formant_timbre1])
+            with gr.Row():
+                model_index0.change(fn=index_strength_show, inputs=[model_index0], outputs=[index_strength0])
+                txt_input.upload(fn=process_input, inputs=[txt_input], outputs=[prompt])
+                use_txt.change(fn=visible, inputs=[use_txt], outputs=[txt_input])
+            with gr.Row():
+                google_tts_check_box.change(fn=change_tts_voice_choices, inputs=[google_tts_check_box], outputs=[tts_voice])
+                tts_button.click(
+                    fn=TTS, 
+                    inputs=[
+                        prompt, 
+                        tts_voice, 
+                        speed, 
+                        output_audio0,
+                        tts_pitch,
+                        google_tts_check_box,
+                        txt_input
+                    ], 
+                    outputs=[tts_voice_audio],
+                    api_name="text-to-speech"
+                )
+                convert_button0.click(
+                    fn=convert_tts,
+                    inputs=[
+                        cleaner1, 
+                        autotune3, 
+                        pitch0, 
+                        clean_strength1, 
+                        model_pth0, 
+                        model_index0, 
+                        index_strength0, 
+                        output_audio0, 
+                        output_audio1,
+                        export_format0,
+                        method0, 
+                        hybrid_method0, 
+                        hop_length0, 
+                        embedders0, 
+                        custom_embedders0, 
+                        resample_sr0, 
+                        filter_radius0, 
+                        volume_envelope0, 
+                        protect0,
+                        split_audio0,
+                        f0_autotune_strength0,
+                        checkpointing0,
+                        onnx_f0_mode1,
+                        formant_shifting1, 
+                        formant_qfrency1, 
+                        formant_timbre1,
+                        f0_file_dropdown0,
+                        embed_mode1
+                    ],
+                    outputs=[tts_voice_convert],
+                    api_name="convert_tts"
+                )
+
+        
+        
+        with gr.TabItem(translations["downloads"], visible=configs.get("downloads_tab", True)):
+            gr.Markdown(translations["download_markdown"])
+            with gr.Row():
+                gr.Markdown(translations["download_markdown_2"])
+            with gr.Row():
+                with gr.Accordion(translations["model_download"], open=True):
+                    with gr.Row():
+                        downloadmodel = gr.Radio(label=translations["model_download_select"], choices=[translations["download_url"], translations["download_from_csv"], translations["search_models"], translations["upload"]], interactive=True, value=translations["download_url"])
+                    with gr.Row():
+                        gr.Markdown("___")
+                    with gr.Column():
+                        with gr.Row():
+                            url_input = gr.Textbox(label=translations["model_url"], value="", placeholder="https://...", scale=6)
+                            download_model_name = gr.Textbox(label=translations["modelname"], value="", placeholder=translations["modelname"], scale=2)
+                        url_download = gr.Button(value=translations["downloads"], scale=2)
+                    with gr.Column():
+                        model_browser = gr.Dropdown(choices=models.keys(), label=translations["model_warehouse"], scale=8, allow_custom_value=True, visible=False)
+                        download_from_browser = gr.Button(value=translations["get_model"], scale=2, variant="primary", visible=False)
+                    with gr.Column():
+                        search_name = gr.Textbox(label=translations["name_to_search"], placeholder=translations["modelname"], interactive=True, scale=8, visible=False)
+                        search = gr.Button(translations["search_2"], scale=2, visible=False)
+                        search_dropdown = gr.Dropdown(label=translations["select_download_model"], value="", choices=[], allow_custom_value=True, interactive=False, visible=False)
+                        download = gr.Button(translations["downloads"], variant="primary", visible=False)
+                    with gr.Column():
+                        model_upload = gr.File(label=translations["drop_model"], file_types=[".pth", ".onnx", ".index", ".zip"], visible=False)
+            with gr.Row():
+                with gr.Accordion(translations["download_pretrained_2"], open=False):
+                    with gr.Row():
+                        pretrain_download_choices = gr.Radio(label=translations["model_download_select"], choices=[translations["download_url"], translations["list_model"], translations["upload"]], value=translations["download_url"], interactive=True)  
+                    with gr.Row():
+                        gr.Markdown("___")
+                    with gr.Column():
+                        with gr.Row():
+                            pretrainD = gr.Textbox(label=translations["pretrained_url"].format(dg="D"), value="", info=translations["only_huggingface"], placeholder="https://...", interactive=True, scale=4)
+                            pretrainG = gr.Textbox(label=translations["pretrained_url"].format(dg="G"), value="", info=translations["only_huggingface"], placeholder="https://...", interactive=True, scale=4)
+                        download_pretrain_button = gr.Button(translations["downloads"], scale=2)
+                    with gr.Column():
+                        with gr.Row():
+                            pretrain_choices = gr.Dropdown(label=translations["select_pretrain"], info=translations["select_pretrain_info"], choices=list(fetch_pretrained_data().keys()), value="Titan_Medium", allow_custom_value=True, interactive=True, scale=6, visible=False)
+                            sample_rate_pretrain = gr.Dropdown(label=translations["pretrain_sr"], info=translations["pretrain_sr"], choices=["48k", "40k", "32k"], value="48k", interactive=True, visible=False)
+                        download_pretrain_choices_button = gr.Button(translations["downloads"], scale=2, variant="primary", visible=False)
+                    with gr.Row():
+                        pretrain_upload_g = gr.File(label=translations["drop_pretrain"].format(dg="G"), file_types=[".pth"], visible=False)
+                        pretrain_upload_d = gr.File(label=translations["drop_pretrain"].format(dg="D"), file_types=[".pth"], visible=False)
+            with gr.Row():
+                url_download.click(
+                    fn=download_model, 
+                    inputs=[
+                        url_input, 
+                        download_model_name
+                    ], 
+                    outputs=[url_input],
+                    api_name="download_model"
+                )
+                download_from_browser.click(
+                    fn=lambda model: download_model(models[model], model), 
+                    inputs=[model_browser], 
+                    outputs=[model_browser],
+                    api_name="download_browser"
+                )
+            with gr.Row():
+                downloadmodel.change(fn=change_download_choices, inputs=[downloadmodel], outputs=[url_input, download_model_name, url_download, model_browser, download_from_browser, search_name, search, search_dropdown, download, model_upload])
+                search.click(fn=search_models, inputs=[search_name], outputs=[search_dropdown, download])
+                model_upload.upload(fn=save_drop_model, inputs=[model_upload], outputs=[model_upload])
+                download.click(
+                    fn=lambda model: download_model(model_options[model], model), 
+                    inputs=[search_dropdown], 
+                    outputs=[search_dropdown],
+                    api_name="search_models"
+                )
+            with gr.Row():
+                pretrain_download_choices.change(fn=change_download_pretrained_choices, inputs=[pretrain_download_choices], outputs=[pretrainD, pretrainG, download_pretrain_button, pretrain_choices, sample_rate_pretrain, download_pretrain_choices_button, pretrain_upload_d, pretrain_upload_g])
+                pretrain_choices.change(fn=update_sample_rate_dropdown, inputs=[pretrain_choices], outputs=[sample_rate_pretrain])
+            with gr.Row():
+                download_pretrain_button.click(
+                    fn=download_pretrained_model,
+                    inputs=[
+                        pretrain_download_choices, 
+                        pretrainD, 
+                        pretrainG
+                    ],
+                    outputs=[pretrainD],
+                    api_name="download_pretrain_link"
+                )
+                download_pretrain_choices_button.click(
+                    fn=download_pretrained_model,
+                    inputs=[
+                        pretrain_download_choices, 
+                        pretrain_choices, 
+                        sample_rate_pretrain
+                    ],
+                    outputs=[pretrain_choices],
+                    api_name="download_pretrain_choices"
+                )
+                pretrain_upload_g.upload(
+                    fn=lambda pretrain_upload_g: shutil.move(pretrain_upload_g.name, os.path.join("assets", "models", "pretrained_custom")), 
+                    inputs=[pretrain_upload_g], 
+                    outputs=[],
+                    api_name="upload_pretrain_g"
+                )
+                pretrain_upload_d.upload(
+                    fn=lambda pretrain_upload_d: shutil.move(pretrain_upload_d.name, os.path.join("assets", "models", "pretrained_custom")), 
+                    inputs=[pretrain_upload_d], 
+                    outputs=[],
+                    api_name="upload_pretrain_d"
+                )
+
+        
+        with gr.TabItem(translations["training_model"], visible=configs.get("training_tab", True)):
+            gr.Markdown(f"## {translations['training_model']}")
+            with gr.Row():
+                gr.Markdown(translations["training_markdown"])
+            with gr.Row():
+                with gr.Column():
+                    with gr.Row():
+                        with gr.Column():
+                            training_name = gr.Textbox(label=translations["modelname"], info=translations["training_model_name"], value="", placeholder=translations["modelname"], interactive=True)
+                            training_sr = gr.Radio(label=translations["sample_rate"], info=translations["sample_rate_info"], choices=["32k", "40k", "48k"], value="48k", interactive=True) 
+                            training_ver = gr.Radio(label=translations["training_version"], info=translations["training_version_info"], choices=["v1", "v2"], value="v2", interactive=True) 
+                            with gr.Row():
+                                clean_dataset = gr.Checkbox(label=translations["clear_dataset"], value=False, interactive=True)
+                                preprocess_cut = gr.Checkbox(label=translations["split_audio"], value=True, interactive=True)
+                                process_effects = gr.Checkbox(label=translations["preprocess_effect"], value=False, interactive=True)
+                                checkpointing1 = gr.Checkbox(label=translations["memory_efficient_training"], value=False, interactive=True)
+                                training_f0 = gr.Checkbox(label=translations["training_pitch"], value=True, interactive=True)
+                                upload = gr.Checkbox(label=translations["upload_dataset"], value=False, interactive=True)
+                            with gr.Row():
+                                clean_dataset_strength = gr.Slider(label=translations["clean_strength"], info=translations["clean_strength_info"], minimum=0, maximum=1, value=0.7, step=0.1, interactive=True, visible=clean_dataset.value)
+                        with gr.Column():
+                            preprocess_button = gr.Button(translations["preprocess_button"], scale=2)
+                            upload_dataset = gr.Files(label=translations["drop_audio"], file_types=[".wav", ".mp3", ".flac", ".ogg", ".opus", ".m4a", ".mp4", ".aac", ".alac", ".wma", ".aiff", ".webm", ".ac3"], visible=upload.value)
+                            preprocess_info = gr.Textbox(label=translations["preprocess_info"], value="", interactive=False)
+                with gr.Column():
+                    with gr.Row():
+                        with gr.Column():
+                            with gr.Accordion(label=translations["f0_method"], open=False):
+                                with gr.Group():
+                                    with gr.Row():
+                                        onnx_f0_mode2 = gr.Checkbox(label=translations["f0_onnx_mode"], info=translations["f0_onnx_mode_info"], value=False, interactive=True)
+                                        unlock_full_method4 = gr.Checkbox(label=translations["f0_unlock"], info=translations["f0_unlock_info"], value=False, interactive=True)
+                                    extract_method = gr.Radio(label=translations["f0_method"], info=translations["f0_method_info"], choices=method_f0, value="rmvpe", interactive=True)
+                                extract_hop_length = gr.Slider(label="Hop length", info=translations["hop_length_info"], minimum=1, maximum=512, value=128, step=1, interactive=True, visible=False)
+                            with gr.Accordion(label=translations["hubert_model"], open=False):
+                                with gr.Group():
+                                    embed_mode2 = gr.Radio(label=translations["embed_mode"], info=translations["embed_mode_info"], value="fairseq", choices=embedders_mode, interactive=True, visible=True)
+                                    extract_embedders = gr.Radio(label=translations["hubert_model"], info=translations["hubert_info"], choices=embedders_model, value="hubert_base", interactive=True)
+                                with gr.Row():
+                                    extract_embedders_custom = gr.Textbox(label=translations["modelname"], info=translations["modelname_info"], value="", placeholder="hubert_base", interactive=True, visible=extract_embedders.value == "custom")
+                        with gr.Column():
+                            extract_button = gr.Button(translations["extract_button"], scale=2)
+                            extract_info = gr.Textbox(label=translations["extract_info"], value="", interactive=False)
+                with gr.Column():
+                    with gr.Row():
+                        with gr.Column():
+                            total_epochs = gr.Slider(label=translations["total_epoch"], info=translations["total_epoch_info"], minimum=1, maximum=10000, value=300, step=1, interactive=True)
+                            save_epochs = gr.Slider(label=translations["save_epoch"], info=translations["save_epoch_info"], minimum=1, maximum=10000, value=50, step=1, interactive=True)
+                        with gr.Column():
+                            with gr.Row():
+                                index_button = gr.Button(f"3. {translations['create_index']}", variant="primary", scale=2)
+                                training_button = gr.Button(f"4. {translations['training_model']}", variant="primary", scale=2)
+                    with gr.Row():
+                        with gr.Accordion(label=translations["setting"], open=False):
+                            with gr.Row():
+                                index_algorithm = gr.Radio(label=translations["index_algorithm"], info=translations["index_algorithm_info"], choices=["Auto", "Faiss", "KMeans"], value="Auto", interactive=True)
+                            with gr.Row():
+                                custom_dataset = gr.Checkbox(label=translations["custom_dataset"], info=translations["custom_dataset_info"], value=False, interactive=True)
+                                overtraining_detector = gr.Checkbox(label=translations["overtraining_detector"], info=translations["overtraining_detector_info"], value=False, interactive=True)
+                                clean_up = gr.Checkbox(label=translations["cleanup_training"], info=translations["cleanup_training_info"], value=False, interactive=True)
+                                cache_in_gpu = gr.Checkbox(label=translations["cache_in_gpu"], info=translations["cache_in_gpu_info"], value=False, interactive=True)
+                            with gr.Column():
+                                dataset_path = gr.Textbox(label=translations["dataset_folder"], value="dataset", interactive=True, visible=custom_dataset.value)
+                            with gr.Column():
+                                threshold = gr.Slider(minimum=1, maximum=100, value=50, step=1, label=translations["threshold"], interactive=True, visible=overtraining_detector.value)
+                                with gr.Accordion(translations["setting_cpu_gpu"], open=False):
+                                    with gr.Column():
+                                        gpu_number = gr.Textbox(label=translations["gpu_number"], value=str("-".join(map(str, range(torch.cuda.device_count()))) if torch.cuda.is_available() else "-"), info=translations["gpu_number_info"], interactive=True)
+                                        gpu_info = gr.Textbox(label=translations["gpu_info"], value=get_gpu_info(), info=translations["gpu_info_2"], interactive=False)
+                                        cpu_core = gr.Slider(label=translations["cpu_core"], info=translations["cpu_core_info"], minimum=0, maximum=cpu_count(), value=cpu_count(), step=1, interactive=True)          
+                                        train_batch_size = gr.Slider(label=translations["batch_size"], info=translations["batch_size_info"], minimum=1, maximum=64, value=8, step=1, interactive=True)
+                            with gr.Row():
+                                save_only_latest = gr.Checkbox(label=translations["save_only_latest"], info=translations["save_only_latest_info"], value=True, interactive=True)
+                                save_every_weights = gr.Checkbox(label=translations["save_every_weights"], info=translations["save_every_weights_info"], value=True, interactive=True)
+                                not_use_pretrain = gr.Checkbox(label=translations["not_use_pretrain_2"], info=translations["not_use_pretrain_info"], value=False, interactive=True)
+                                custom_pretrain = gr.Checkbox(label=translations["custom_pretrain"], info=translations["custom_pretrain_info"], value=False, interactive=True)
+                            with gr.Row():
+                                vocoders = gr.Radio(label=translations["vocoder"], info=translations["vocoder_info"], choices=["Default", "MRF-HiFi-GAN", "RefineGAN"], value="Default", interactive=True) 
+                            with gr.Row():
+                                deterministic = gr.Checkbox(label=translations["deterministic"], info=translations["deterministic_info"], value=False, interactive=True)
+                                benchmark = gr.Checkbox(label=translations["benchmark"], info=translations["benchmark_info"], value=False, interactive=True)
+                            with gr.Row():
+                                model_author = gr.Textbox(label=translations["training_author"], info=translations["training_author_info"], value="", placeholder=translations["training_author"], interactive=True)
+                            with gr.Row():
+                                with gr.Column():
+                                    with gr.Accordion(translations["custom_pretrain_info"], open=False, visible=custom_pretrain.value and not not_use_pretrain.value) as pretrain_setting:
+                                        pretrained_D = gr.Dropdown(label=translations["pretrain_file"].format(dg="D"), choices=pretrainedD, value=pretrainedD[0] if len(pretrainedD) > 0 else '', interactive=True, allow_custom_value=True)
+                                        pretrained_G = gr.Dropdown(label=translations["pretrain_file"].format(dg="G"), choices=pretrainedG, value=pretrainedG[0] if len(pretrainedG) > 0 else '', interactive=True, allow_custom_value=True)
+                                        refesh_pretrain = gr.Button(translations["refesh"], scale=2)
+                    with gr.Row():
+                        training_info = gr.Textbox(label=translations["train_info"], value="", interactive=False)
+                    with gr.Row():
+                        with gr.Column():
+                            with gr.Accordion(translations["export_model"], open=False):
+                                with gr.Row():
+                                    model_file= gr.Dropdown(label=translations["model_name"], choices=model_name, value=model_name[0] if len(model_name) >= 1 else "", interactive=True, allow_custom_value=True)
+                                    index_file = gr.Dropdown(label=translations["index_path"], choices=index_path, value=index_path[0] if len(index_path) >= 1 else "", interactive=True, allow_custom_value=True)
+                                with gr.Row():
+                                    refesh_file = gr.Button(f"1. {translations['refesh']}", scale=2)
+                                    zip_model = gr.Button(translations["zip_model"], variant="primary", scale=2)
+                                with gr.Row():
+                                    zip_output = gr.File(label=translations["output_zip"], file_types=[".zip"], interactive=False, visible=False)
+            with gr.Row():
+                vocoders.change(fn=pitch_guidance_lock, inputs=[vocoders], outputs=[training_f0])
+                training_f0.change(fn=vocoders_lock, inputs=[training_f0, vocoders], outputs=[vocoders])
+                unlock_full_method4.change(fn=unlock_f0, inputs=[unlock_full_method4], outputs=[extract_method])
+            with gr.Row():
+                refesh_file.click(fn=change_models_choices, inputs=[], outputs=[model_file, index_file]) 
+                zip_model.click(fn=zip_file, inputs=[training_name, model_file, index_file], outputs=[zip_output])                
+                dataset_path.change(fn=lambda folder: os.makedirs(folder, exist_ok=True), inputs=[dataset_path], outputs=[])
+            with gr.Row():
+                upload.change(fn=visible, inputs=[upload], outputs=[upload_dataset]) 
+                overtraining_detector.change(fn=visible, inputs=[overtraining_detector], outputs=[threshold]) 
+                clean_dataset.change(fn=visible, inputs=[clean_dataset], outputs=[clean_dataset_strength])
+            with gr.Row():
+                custom_dataset.change(fn=lambda custom_dataset: [visible(custom_dataset), "dataset"],inputs=[custom_dataset], outputs=[dataset_path, dataset_path])
+                training_ver.change(fn=unlock_vocoder, inputs=[training_ver, vocoders], outputs=[vocoders])
+                vocoders.change(fn=unlock_ver, inputs=[training_ver, vocoders], outputs=[training_ver])
+                upload_dataset.upload(
+                    fn=lambda files, folder: [shutil.move(f.name, os.path.join(folder, os.path.split(f.name)[1])) for f in files] if folder != "" else gr_warning(translations["dataset_folder1"]),
+                    inputs=[upload_dataset, dataset_path], 
+                    outputs=[], 
+                    api_name="upload_dataset"
+                )           
+            with gr.Row():
+                not_use_pretrain.change(fn=lambda a, b: visible(a and not b), inputs=[custom_pretrain, not_use_pretrain], outputs=[pretrain_setting])
+                custom_pretrain.change(fn=lambda a, b: visible(a and not b), inputs=[custom_pretrain, not_use_pretrain], outputs=[pretrain_setting])
+                refesh_pretrain.click(fn=change_pretrained_choices, inputs=[], outputs=[pretrained_D, pretrained_G])
+            with gr.Row():
+                preprocess_button.click(
+                    fn=preprocess,
+                    inputs=[
+                        training_name, 
+                        training_sr, 
+                        cpu_core,
+                        preprocess_cut, 
+                        process_effects,
+                        dataset_path,
+                        clean_dataset,
+                        clean_dataset_strength
+                    ],
+                    outputs=[preprocess_info],
+                    api_name="preprocess"
+                )
+            with gr.Row():
+                embed_mode2.change(fn=visible_embedders, inputs=[embed_mode2], outputs=[extract_embedders])
+                extract_method.change(fn=hoplength_show, inputs=[extract_method], outputs=[extract_hop_length])
+                extract_embedders.change(fn=lambda extract_embedders: visible(extract_embedders == "custom"), inputs=[extract_embedders], outputs=[extract_embedders_custom])
+            with gr.Row():
+                extract_button.click(
+                    fn=extract,
+                    inputs=[
+                        training_name, 
+                        training_ver, 
+                        extract_method, 
+                        training_f0, 
+                        extract_hop_length, 
+                        cpu_core,
+                        gpu_number,
+                        training_sr, 
+                        extract_embedders, 
+                        extract_embedders_custom,
+                        onnx_f0_mode2,
+                        embed_mode2
+                    ],
+                    outputs=[extract_info],
+                    api_name="extract"
+                )
+            with gr.Row():
+                index_button.click(
+                    fn=create_index,
+                    inputs=[
+                        training_name, 
+                        training_ver, 
+                        index_algorithm
+                    ],
+                    outputs=[training_info],
+                    api_name="create_index"
+                )
+            with gr.Row():
+                training_button.click(
+                    fn=training,
+                    inputs=[
+                        training_name, 
+                        training_ver, 
+                        save_epochs, 
+                        save_only_latest, 
+                        save_every_weights, 
+                        total_epochs, 
+                        training_sr,
+                        train_batch_size, 
+                        gpu_number,
+                        training_f0,
+                        not_use_pretrain,
+                        custom_pretrain,
+                        pretrained_G,
+                        pretrained_D,
+                        overtraining_detector,
+                        threshold,
+                        clean_up,
+                        cache_in_gpu,
+                        model_author,
+                        vocoders,
+                        checkpointing1,
+                        deterministic, 
+                        benchmark
+                    ],
+                    outputs=[training_info],
+                    api_name="training_model"
+                )
+
         with gr.TabItem(translations["convert_with_whisper"], visible=configs.get("convert_with_whisper", True)):
             gr.Markdown(f"## {translations['convert_with_whisper']}")
             with gr.Row():
@@ -577,152 +1051,7 @@ with gr.Blocks(title=" Ultimate RVC Maker ⚡", theme=theme) as app:
                     api_name="convert_with_whisper"
                 )
 
-        with gr.TabItem(translations["convert_text"], visible=configs.get("tts_tab", True)):
-            gr.Markdown(translations["convert_text_markdown"])
-            with gr.Row():
-                gr.Markdown(translations["convert_text_markdown_2"])
-            with gr.Row():
-                with gr.Column():
-                    with gr.Group():
-                        with gr.Row():
-                            use_txt = gr.Checkbox(label=translations["input_txt"], value=False, interactive=True)
-                            google_tts_check_box = gr.Checkbox(label=translations["googletts"], value=False, interactive=True)
-                        prompt = gr.Textbox(label=translations["text_to_speech"], value="", placeholder="Hello Words", lines=3)
-                with gr.Column():
-                    speed = gr.Slider(label=translations["voice_speed"], info=translations["voice_speed_info"], minimum=-100, maximum=100, value=0, step=1)
-                    pitch0 = gr.Slider(minimum=-20, maximum=20, step=1, info=translations["pitch_info"], label=translations["pitch"], value=0, interactive=True)
-            with gr.Row():
-                tts_button = gr.Button(translations["tts_1"], variant="primary", scale=2)
-                convert_button0 = gr.Button(translations["tts_2"], variant="secondary", scale=2)
-            with gr.Row():
-                with gr.Column():
-                    txt_input = gr.File(label=translations["drop_text"], file_types=[".txt", ".srt"], visible=use_txt.value)  
-                    tts_voice = gr.Dropdown(label=translations["voice"], choices=edgetts, interactive=True, value="vi-VN-NamMinhNeural")
-                    tts_pitch = gr.Slider(minimum=-20, maximum=20, step=1, info=translations["pitch_info_2"], label=translations["pitch"], value=0, interactive=True)
-                with gr.Column():
-                    with gr.Accordion(translations["model_accordion"], open=True):
-                        with gr.Row():
-                            model_pth0 = gr.Dropdown(label=translations["model_name"], choices=model_name, value=model_name[0] if len(model_name) >= 1 else "", interactive=True, allow_custom_value=True)
-                            model_index0 = gr.Dropdown(label=translations["index_path"], choices=index_path, value=index_path[0] if len(index_path) >= 1 else "", interactive=True, allow_custom_value=True)
-                        with gr.Row():
-                            refesh1 = gr.Button(translations["refesh"])
-                        with gr.Row():
-                            index_strength0 = gr.Slider(label=translations["index_strength"], info=translations["index_strength_info"], minimum=0, maximum=1, value=0.5, step=0.01, interactive=True, visible=model_index0.value != "")
-                    with gr.Accordion(translations["output_path"], open=False):
-                        export_format0 = gr.Radio(label=translations["export_format"], info=translations["export_info"], choices=["wav", "mp3", "flac", "ogg", "opus", "m4a", "mp4", "aac", "alac", "wma", "aiff", "webm", "ac3"], value="wav", interactive=True)
-                        output_audio0 = gr.Textbox(label=translations["output_tts"], value="audios/tts.wav", placeholder="audios/tts.wav", info=translations["tts_output"], interactive=True)
-                        output_audio1 = gr.Textbox(label=translations["output_tts_convert"], value="audios/tts-convert.wav", placeholder="audios/tts-convert.wav", info=translations["tts_output"], interactive=True)
-                    with gr.Accordion(translations["setting"], open=False):
-                        with gr.Accordion(translations["f0_method"], open=False):
-                            with gr.Group():
-                                with gr.Row():
-                                    onnx_f0_mode1 = gr.Checkbox(label=translations["f0_onnx_mode"], info=translations["f0_onnx_mode_info"], value=False, interactive=True)
-                                    unlock_full_method3 = gr.Checkbox(label=translations["f0_unlock"], info=translations["f0_unlock_info"], value=False, interactive=True)
-                                method0 = gr.Radio(label=translations["f0_method"], info=translations["f0_method_info"], choices=method_f0+["hybrid"], value="rmvpe", interactive=True)
-                                hybrid_method0 = gr.Dropdown(label=translations["f0_method_hybrid"], info=translations["f0_method_hybrid_info"], choices=["hybrid[pm+dio]", "hybrid[pm+crepe-tiny]", "hybrid[pm+crepe]", "hybrid[pm+fcpe]", "hybrid[pm+rmvpe]", "hybrid[pm+harvest]", "hybrid[pm+yin]", "hybrid[dio+crepe-tiny]", "hybrid[dio+crepe]", "hybrid[dio+fcpe]", "hybrid[dio+rmvpe]", "hybrid[dio+harvest]", "hybrid[dio+yin]", "hybrid[crepe-tiny+crepe]", "hybrid[crepe-tiny+fcpe]", "hybrid[crepe-tiny+rmvpe]", "hybrid[crepe-tiny+harvest]", "hybrid[crepe+fcpe]", "hybrid[crepe+rmvpe]", "hybrid[crepe+harvest]", "hybrid[crepe+yin]", "hybrid[fcpe+rmvpe]", "hybrid[fcpe+harvest]", "hybrid[fcpe+yin]", "hybrid[rmvpe+harvest]", "hybrid[rmvpe+yin]", "hybrid[harvest+yin]"], value="hybrid[pm+dio]", interactive=True, allow_custom_value=True, visible=method0.value == "hybrid")
-                            hop_length0 = gr.Slider(label="Hop length", info=translations["hop_length_info"], minimum=1, maximum=512, value=128, step=1, interactive=True, visible=False)
-                        with gr.Accordion(translations["f0_file"], open=False):
-                            upload_f0_file0 = gr.File(label=translations["upload_f0"], file_types=[".txt"])  
-                            f0_file_dropdown0 = gr.Dropdown(label=translations["f0_file_2"], value="", choices=f0_file, allow_custom_value=True, interactive=True)
-                            refesh_f0_file0 = gr.Button(translations["refesh"])
-                        with gr.Accordion(translations["hubert_model"], open=False):
-                            embed_mode1 = gr.Radio(label=translations["embed_mode"], info=translations["embed_mode_info"], value="fairseq", choices=embedders_mode, interactive=True, visible=True)
-                            embedders0 = gr.Radio(label=translations["hubert_model"], info=translations["hubert_info"], choices=embedders_model, value="hubert_base", interactive=True)
-                            custom_embedders0 = gr.Textbox(label=translations["modelname"], info=translations["modelname_info"], value="", placeholder="hubert_base", interactive=True, visible=embedders0.value == "custom")
-                        with gr.Group():
-                            with gr.Row():
-                                formant_shifting1 = gr.Checkbox(label=translations["formantshift"], value=False, interactive=True)  
-                                split_audio0 = gr.Checkbox(label=translations["split_audio"], value=False, interactive=True)   
-                                cleaner1 = gr.Checkbox(label=translations["clear_audio"], value=False, interactive=True)     
-                                autotune3 = gr.Checkbox(label=translations["autotune"], value=False, interactive=True) 
-                                checkpointing0 = gr.Checkbox(label=translations["memory_efficient_training"], value=False, interactive=True)         
-                        with gr.Column():
-                            f0_autotune_strength0 = gr.Slider(minimum=0, maximum=1, label=translations["autotune_rate"], info=translations["autotune_rate_info"], value=1, step=0.1, interactive=True, visible=autotune3.value)
-                            clean_strength1 = gr.Slider(label=translations["clean_strength"], info=translations["clean_strength_info"], minimum=0, maximum=1, value=0.5, step=0.1, interactive=True, visible=cleaner1.value)
-                            resample_sr0 = gr.Slider(minimum=0, maximum=96000, label=translations["resample"], info=translations["resample_info"], value=0, step=1, interactive=True)
-                            filter_radius0 = gr.Slider(minimum=0, maximum=7, label=translations["filter_radius"], info=translations["filter_radius_info"], value=3, step=1, interactive=True)
-                            volume_envelope0 = gr.Slider(minimum=0, maximum=1, label=translations["volume_envelope"], info=translations["volume_envelope_info"], value=1, step=0.1, interactive=True)
-                            protect0 = gr.Slider(minimum=0, maximum=1, label=translations["protect"], info=translations["protect_info"], value=0.5, step=0.01, interactive=True)
-                        with gr.Row():
-                            formant_qfrency1 = gr.Slider(value=1.0, label=translations["formant_qfrency"], info=translations["formant_qfrency"], minimum=0.0, maximum=16.0, step=0.1, interactive=True, visible=False)
-                            formant_timbre1 = gr.Slider(value=1.0, label=translations["formant_timbre"], info=translations["formant_timbre"], minimum=0.0, maximum=16.0, step=0.1, interactive=True, visible=False)
-            with gr.Row():
-                gr.Markdown(translations["output_tts_markdown"])
-            with gr.Row():
-                tts_voice_audio = gr.Audio(show_download_button=True, interactive=False, label=translations["output_text_to_speech"])
-                tts_voice_convert = gr.Audio(show_download_button=True, interactive=False, label=translations["output_file_tts_convert"])
-            with gr.Row():
-                unlock_full_method3.change(fn=unlock_f0, inputs=[unlock_full_method3], outputs=[method0])
-                upload_f0_file0.upload(fn=lambda inp: shutil.move(inp.name, os.path.join("assets", "f0")), inputs=[upload_f0_file0], outputs=[f0_file_dropdown0])
-                refesh_f0_file0.click(fn=change_f0_choices, inputs=[], outputs=[f0_file_dropdown0])
-            with gr.Row():
-                embed_mode1.change(fn=visible_embedders, inputs=[embed_mode1], outputs=[embedders0])
-                autotune3.change(fn=visible, inputs=[autotune3], outputs=[f0_autotune_strength0])
-                model_pth0.change(fn=get_index, inputs=[model_pth0], outputs=[model_index0])
-            with gr.Row():
-                cleaner1.change(fn=visible, inputs=[cleaner1], outputs=[clean_strength1])
-                method0.change(fn=lambda method, hybrid: [visible(method == "hybrid"), hoplength_show(method, hybrid)], inputs=[method0, hybrid_method0], outputs=[hybrid_method0, hop_length0])
-                hybrid_method0.change(fn=hoplength_show, inputs=[method0, hybrid_method0], outputs=[hop_length0])
-            with gr.Row():
-                refesh1.click(fn=change_models_choices, inputs=[], outputs=[model_pth0, model_index0])
-                embedders0.change(fn=lambda embedders: visible(embedders == "custom"), inputs=[embedders0], outputs=[custom_embedders0])
-                formant_shifting1.change(fn=lambda a: [visible(a)]*2, inputs=[formant_shifting1], outputs=[formant_qfrency1, formant_timbre1])
-            with gr.Row():
-                model_index0.change(fn=index_strength_show, inputs=[model_index0], outputs=[index_strength0])
-                txt_input.upload(fn=process_input, inputs=[txt_input], outputs=[prompt])
-                use_txt.change(fn=visible, inputs=[use_txt], outputs=[txt_input])
-            with gr.Row():
-                google_tts_check_box.change(fn=change_tts_voice_choices, inputs=[google_tts_check_box], outputs=[tts_voice])
-                tts_button.click(
-                    fn=TTS, 
-                    inputs=[
-                        prompt, 
-                        tts_voice, 
-                        speed, 
-                        output_audio0,
-                        tts_pitch,
-                        google_tts_check_box,
-                        txt_input
-                    ], 
-                    outputs=[tts_voice_audio],
-                    api_name="text-to-speech"
-                )
-                convert_button0.click(
-                    fn=convert_tts,
-                    inputs=[
-                        cleaner1, 
-                        autotune3, 
-                        pitch0, 
-                        clean_strength1, 
-                        model_pth0, 
-                        model_index0, 
-                        index_strength0, 
-                        output_audio0, 
-                        output_audio1,
-                        export_format0,
-                        method0, 
-                        hybrid_method0, 
-                        hop_length0, 
-                        embedders0, 
-                        custom_embedders0, 
-                        resample_sr0, 
-                        filter_radius0, 
-                        volume_envelope0, 
-                        protect0,
-                        split_audio0,
-                        f0_autotune_strength0,
-                        checkpointing0,
-                        onnx_f0_mode1,
-                        formant_shifting1, 
-                        formant_qfrency1, 
-                        formant_timbre1,
-                        f0_file_dropdown0,
-                        embed_mode1
-                    ],
-                    outputs=[tts_voice_convert],
-                    api_name="convert_tts"
-                )
-
+        
         with gr.TabItem(translations["audio_editing"], visible=configs.get("audioldm2", True)):
             gr.Markdown(translations["audio_editing_info"])
             with gr.Row():
@@ -1044,217 +1373,6 @@ with gr.Blocks(title=" Ultimate RVC Maker ⚡", theme=theme) as app:
                     api_name="create_dataset"
                 )
 
-        with gr.TabItem(translations["training_model"], visible=configs.get("training_tab", True)):
-            gr.Markdown(f"## {translations['training_model']}")
-            with gr.Row():
-                gr.Markdown(translations["training_markdown"])
-            with gr.Row():
-                with gr.Column():
-                    with gr.Row():
-                        with gr.Column():
-                            training_name = gr.Textbox(label=translations["modelname"], info=translations["training_model_name"], value="", placeholder=translations["modelname"], interactive=True)
-                            training_sr = gr.Radio(label=translations["sample_rate"], info=translations["sample_rate_info"], choices=["32k", "40k", "48k"], value="48k", interactive=True) 
-                            training_ver = gr.Radio(label=translations["training_version"], info=translations["training_version_info"], choices=["v1", "v2"], value="v2", interactive=True) 
-                            with gr.Row():
-                                clean_dataset = gr.Checkbox(label=translations["clear_dataset"], value=False, interactive=True)
-                                preprocess_cut = gr.Checkbox(label=translations["split_audio"], value=True, interactive=True)
-                                process_effects = gr.Checkbox(label=translations["preprocess_effect"], value=False, interactive=True)
-                                checkpointing1 = gr.Checkbox(label=translations["memory_efficient_training"], value=False, interactive=True)
-                                training_f0 = gr.Checkbox(label=translations["training_pitch"], value=True, interactive=True)
-                                upload = gr.Checkbox(label=translations["upload_dataset"], value=False, interactive=True)
-                            with gr.Row():
-                                clean_dataset_strength = gr.Slider(label=translations["clean_strength"], info=translations["clean_strength_info"], minimum=0, maximum=1, value=0.7, step=0.1, interactive=True, visible=clean_dataset.value)
-                        with gr.Column():
-                            preprocess_button = gr.Button(translations["preprocess_button"], scale=2)
-                            upload_dataset = gr.Files(label=translations["drop_audio"], file_types=[".wav", ".mp3", ".flac", ".ogg", ".opus", ".m4a", ".mp4", ".aac", ".alac", ".wma", ".aiff", ".webm", ".ac3"], visible=upload.value)
-                            preprocess_info = gr.Textbox(label=translations["preprocess_info"], value="", interactive=False)
-                with gr.Column():
-                    with gr.Row():
-                        with gr.Column():
-                            with gr.Accordion(label=translations["f0_method"], open=False):
-                                with gr.Group():
-                                    with gr.Row():
-                                        onnx_f0_mode2 = gr.Checkbox(label=translations["f0_onnx_mode"], info=translations["f0_onnx_mode_info"], value=False, interactive=True)
-                                        unlock_full_method4 = gr.Checkbox(label=translations["f0_unlock"], info=translations["f0_unlock_info"], value=False, interactive=True)
-                                    extract_method = gr.Radio(label=translations["f0_method"], info=translations["f0_method_info"], choices=method_f0, value="rmvpe", interactive=True)
-                                extract_hop_length = gr.Slider(label="Hop length", info=translations["hop_length_info"], minimum=1, maximum=512, value=128, step=1, interactive=True, visible=False)
-                            with gr.Accordion(label=translations["hubert_model"], open=False):
-                                with gr.Group():
-                                    embed_mode2 = gr.Radio(label=translations["embed_mode"], info=translations["embed_mode_info"], value="fairseq", choices=embedders_mode, interactive=True, visible=True)
-                                    extract_embedders = gr.Radio(label=translations["hubert_model"], info=translations["hubert_info"], choices=embedders_model, value="hubert_base", interactive=True)
-                                with gr.Row():
-                                    extract_embedders_custom = gr.Textbox(label=translations["modelname"], info=translations["modelname_info"], value="", placeholder="hubert_base", interactive=True, visible=extract_embedders.value == "custom")
-                        with gr.Column():
-                            extract_button = gr.Button(translations["extract_button"], scale=2)
-                            extract_info = gr.Textbox(label=translations["extract_info"], value="", interactive=False)
-                with gr.Column():
-                    with gr.Row():
-                        with gr.Column():
-                            total_epochs = gr.Slider(label=translations["total_epoch"], info=translations["total_epoch_info"], minimum=1, maximum=10000, value=300, step=1, interactive=True)
-                            save_epochs = gr.Slider(label=translations["save_epoch"], info=translations["save_epoch_info"], minimum=1, maximum=10000, value=50, step=1, interactive=True)
-                        with gr.Column():
-                            with gr.Row():
-                                index_button = gr.Button(f"3. {translations['create_index']}", variant="primary", scale=2)
-                                training_button = gr.Button(f"4. {translations['training_model']}", variant="primary", scale=2)
-                    with gr.Row():
-                        with gr.Accordion(label=translations["setting"], open=False):
-                            with gr.Row():
-                                index_algorithm = gr.Radio(label=translations["index_algorithm"], info=translations["index_algorithm_info"], choices=["Auto", "Faiss", "KMeans"], value="Auto", interactive=True)
-                            with gr.Row():
-                                custom_dataset = gr.Checkbox(label=translations["custom_dataset"], info=translations["custom_dataset_info"], value=False, interactive=True)
-                                overtraining_detector = gr.Checkbox(label=translations["overtraining_detector"], info=translations["overtraining_detector_info"], value=False, interactive=True)
-                                clean_up = gr.Checkbox(label=translations["cleanup_training"], info=translations["cleanup_training_info"], value=False, interactive=True)
-                                cache_in_gpu = gr.Checkbox(label=translations["cache_in_gpu"], info=translations["cache_in_gpu_info"], value=False, interactive=True)
-                            with gr.Column():
-                                dataset_path = gr.Textbox(label=translations["dataset_folder"], value="dataset", interactive=True, visible=custom_dataset.value)
-                            with gr.Column():
-                                threshold = gr.Slider(minimum=1, maximum=100, value=50, step=1, label=translations["threshold"], interactive=True, visible=overtraining_detector.value)
-                                with gr.Accordion(translations["setting_cpu_gpu"], open=False):
-                                    with gr.Column():
-                                        gpu_number = gr.Textbox(label=translations["gpu_number"], value=str("-".join(map(str, range(torch.cuda.device_count()))) if torch.cuda.is_available() else "-"), info=translations["gpu_number_info"], interactive=True)
-                                        gpu_info = gr.Textbox(label=translations["gpu_info"], value=get_gpu_info(), info=translations["gpu_info_2"], interactive=False)
-                                        cpu_core = gr.Slider(label=translations["cpu_core"], info=translations["cpu_core_info"], minimum=0, maximum=cpu_count(), value=cpu_count(), step=1, interactive=True)          
-                                        train_batch_size = gr.Slider(label=translations["batch_size"], info=translations["batch_size_info"], minimum=1, maximum=64, value=8, step=1, interactive=True)
-                            with gr.Row():
-                                save_only_latest = gr.Checkbox(label=translations["save_only_latest"], info=translations["save_only_latest_info"], value=True, interactive=True)
-                                save_every_weights = gr.Checkbox(label=translations["save_every_weights"], info=translations["save_every_weights_info"], value=True, interactive=True)
-                                not_use_pretrain = gr.Checkbox(label=translations["not_use_pretrain_2"], info=translations["not_use_pretrain_info"], value=False, interactive=True)
-                                custom_pretrain = gr.Checkbox(label=translations["custom_pretrain"], info=translations["custom_pretrain_info"], value=False, interactive=True)
-                            with gr.Row():
-                                vocoders = gr.Radio(label=translations["vocoder"], info=translations["vocoder_info"], choices=["Default", "MRF-HiFi-GAN", "RefineGAN"], value="Default", interactive=True) 
-                            with gr.Row():
-                                deterministic = gr.Checkbox(label=translations["deterministic"], info=translations["deterministic_info"], value=False, interactive=True)
-                                benchmark = gr.Checkbox(label=translations["benchmark"], info=translations["benchmark_info"], value=False, interactive=True)
-                            with gr.Row():
-                                model_author = gr.Textbox(label=translations["training_author"], info=translations["training_author_info"], value="", placeholder=translations["training_author"], interactive=True)
-                            with gr.Row():
-                                with gr.Column():
-                                    with gr.Accordion(translations["custom_pretrain_info"], open=False, visible=custom_pretrain.value and not not_use_pretrain.value) as pretrain_setting:
-                                        pretrained_D = gr.Dropdown(label=translations["pretrain_file"].format(dg="D"), choices=pretrainedD, value=pretrainedD[0] if len(pretrainedD) > 0 else '', interactive=True, allow_custom_value=True)
-                                        pretrained_G = gr.Dropdown(label=translations["pretrain_file"].format(dg="G"), choices=pretrainedG, value=pretrainedG[0] if len(pretrainedG) > 0 else '', interactive=True, allow_custom_value=True)
-                                        refesh_pretrain = gr.Button(translations["refesh"], scale=2)
-                    with gr.Row():
-                        training_info = gr.Textbox(label=translations["train_info"], value="", interactive=False)
-                    with gr.Row():
-                        with gr.Column():
-                            with gr.Accordion(translations["export_model"], open=False):
-                                with gr.Row():
-                                    model_file= gr.Dropdown(label=translations["model_name"], choices=model_name, value=model_name[0] if len(model_name) >= 1 else "", interactive=True, allow_custom_value=True)
-                                    index_file = gr.Dropdown(label=translations["index_path"], choices=index_path, value=index_path[0] if len(index_path) >= 1 else "", interactive=True, allow_custom_value=True)
-                                with gr.Row():
-                                    refesh_file = gr.Button(f"1. {translations['refesh']}", scale=2)
-                                    zip_model = gr.Button(translations["zip_model"], variant="primary", scale=2)
-                                with gr.Row():
-                                    zip_output = gr.File(label=translations["output_zip"], file_types=[".zip"], interactive=False, visible=False)
-            with gr.Row():
-                vocoders.change(fn=pitch_guidance_lock, inputs=[vocoders], outputs=[training_f0])
-                training_f0.change(fn=vocoders_lock, inputs=[training_f0, vocoders], outputs=[vocoders])
-                unlock_full_method4.change(fn=unlock_f0, inputs=[unlock_full_method4], outputs=[extract_method])
-            with gr.Row():
-                refesh_file.click(fn=change_models_choices, inputs=[], outputs=[model_file, index_file]) 
-                zip_model.click(fn=zip_file, inputs=[training_name, model_file, index_file], outputs=[zip_output])                
-                dataset_path.change(fn=lambda folder: os.makedirs(folder, exist_ok=True), inputs=[dataset_path], outputs=[])
-            with gr.Row():
-                upload.change(fn=visible, inputs=[upload], outputs=[upload_dataset]) 
-                overtraining_detector.change(fn=visible, inputs=[overtraining_detector], outputs=[threshold]) 
-                clean_dataset.change(fn=visible, inputs=[clean_dataset], outputs=[clean_dataset_strength])
-            with gr.Row():
-                custom_dataset.change(fn=lambda custom_dataset: [visible(custom_dataset), "dataset"],inputs=[custom_dataset], outputs=[dataset_path, dataset_path])
-                training_ver.change(fn=unlock_vocoder, inputs=[training_ver, vocoders], outputs=[vocoders])
-                vocoders.change(fn=unlock_ver, inputs=[training_ver, vocoders], outputs=[training_ver])
-                upload_dataset.upload(
-                    fn=lambda files, folder: [shutil.move(f.name, os.path.join(folder, os.path.split(f.name)[1])) for f in files] if folder != "" else gr_warning(translations["dataset_folder1"]),
-                    inputs=[upload_dataset, dataset_path], 
-                    outputs=[], 
-                    api_name="upload_dataset"
-                )           
-            with gr.Row():
-                not_use_pretrain.change(fn=lambda a, b: visible(a and not b), inputs=[custom_pretrain, not_use_pretrain], outputs=[pretrain_setting])
-                custom_pretrain.change(fn=lambda a, b: visible(a and not b), inputs=[custom_pretrain, not_use_pretrain], outputs=[pretrain_setting])
-                refesh_pretrain.click(fn=change_pretrained_choices, inputs=[], outputs=[pretrained_D, pretrained_G])
-            with gr.Row():
-                preprocess_button.click(
-                    fn=preprocess,
-                    inputs=[
-                        training_name, 
-                        training_sr, 
-                        cpu_core,
-                        preprocess_cut, 
-                        process_effects,
-                        dataset_path,
-                        clean_dataset,
-                        clean_dataset_strength
-                    ],
-                    outputs=[preprocess_info],
-                    api_name="preprocess"
-                )
-            with gr.Row():
-                embed_mode2.change(fn=visible_embedders, inputs=[embed_mode2], outputs=[extract_embedders])
-                extract_method.change(fn=hoplength_show, inputs=[extract_method], outputs=[extract_hop_length])
-                extract_embedders.change(fn=lambda extract_embedders: visible(extract_embedders == "custom"), inputs=[extract_embedders], outputs=[extract_embedders_custom])
-            with gr.Row():
-                extract_button.click(
-                    fn=extract,
-                    inputs=[
-                        training_name, 
-                        training_ver, 
-                        extract_method, 
-                        training_f0, 
-                        extract_hop_length, 
-                        cpu_core,
-                        gpu_number,
-                        training_sr, 
-                        extract_embedders, 
-                        extract_embedders_custom,
-                        onnx_f0_mode2,
-                        embed_mode2
-                    ],
-                    outputs=[extract_info],
-                    api_name="extract"
-                )
-            with gr.Row():
-                index_button.click(
-                    fn=create_index,
-                    inputs=[
-                        training_name, 
-                        training_ver, 
-                        index_algorithm
-                    ],
-                    outputs=[training_info],
-                    api_name="create_index"
-                )
-            with gr.Row():
-                training_button.click(
-                    fn=training,
-                    inputs=[
-                        training_name, 
-                        training_ver, 
-                        save_epochs, 
-                        save_only_latest, 
-                        save_every_weights, 
-                        total_epochs, 
-                        training_sr,
-                        train_batch_size, 
-                        gpu_number,
-                        training_f0,
-                        not_use_pretrain,
-                        custom_pretrain,
-                        pretrained_G,
-                        pretrained_D,
-                        overtraining_detector,
-                        threshold,
-                        clean_up,
-                        cache_in_gpu,
-                        model_author,
-                        vocoders,
-                        checkpointing1,
-                        deterministic, 
-                        benchmark
-                    ],
-                    outputs=[training_info],
-                    api_name="training_model"
-                )
-
         with gr.TabItem(translations["fushion"], visible=configs.get("fushion_tab", True)):
             gr.Markdown(translations["fushion_markdown"])
             with gr.Row():
@@ -1332,113 +1450,6 @@ with gr.Blocks(title=" Ultimate RVC Maker ⚡", theme=theme) as app:
                     api_name="model_onnx_export"
                 )
                 convert_onnx.click(fn=lambda: visible(True), inputs=[], outputs=[output_model2])  
-
-        with gr.TabItem(translations["downloads"], visible=configs.get("downloads_tab", True)):
-            gr.Markdown(translations["download_markdown"])
-            with gr.Row():
-                gr.Markdown(translations["download_markdown_2"])
-            with gr.Row():
-                with gr.Accordion(translations["model_download"], open=True):
-                    with gr.Row():
-                        downloadmodel = gr.Radio(label=translations["model_download_select"], choices=[translations["download_url"], translations["download_from_csv"], translations["search_models"], translations["upload"]], interactive=True, value=translations["download_url"])
-                    with gr.Row():
-                        gr.Markdown("___")
-                    with gr.Column():
-                        with gr.Row():
-                            url_input = gr.Textbox(label=translations["model_url"], value="", placeholder="https://...", scale=6)
-                            download_model_name = gr.Textbox(label=translations["modelname"], value="", placeholder=translations["modelname"], scale=2)
-                        url_download = gr.Button(value=translations["downloads"], scale=2)
-                    with gr.Column():
-                        model_browser = gr.Dropdown(choices=models.keys(), label=translations["model_warehouse"], scale=8, allow_custom_value=True, visible=False)
-                        download_from_browser = gr.Button(value=translations["get_model"], scale=2, variant="primary", visible=False)
-                    with gr.Column():
-                        search_name = gr.Textbox(label=translations["name_to_search"], placeholder=translations["modelname"], interactive=True, scale=8, visible=False)
-                        search = gr.Button(translations["search_2"], scale=2, visible=False)
-                        search_dropdown = gr.Dropdown(label=translations["select_download_model"], value="", choices=[], allow_custom_value=True, interactive=False, visible=False)
-                        download = gr.Button(translations["downloads"], variant="primary", visible=False)
-                    with gr.Column():
-                        model_upload = gr.File(label=translations["drop_model"], file_types=[".pth", ".onnx", ".index", ".zip"], visible=False)
-            with gr.Row():
-                with gr.Accordion(translations["download_pretrained_2"], open=False):
-                    with gr.Row():
-                        pretrain_download_choices = gr.Radio(label=translations["model_download_select"], choices=[translations["download_url"], translations["list_model"], translations["upload"]], value=translations["download_url"], interactive=True)  
-                    with gr.Row():
-                        gr.Markdown("___")
-                    with gr.Column():
-                        with gr.Row():
-                            pretrainD = gr.Textbox(label=translations["pretrained_url"].format(dg="D"), value="", info=translations["only_huggingface"], placeholder="https://...", interactive=True, scale=4)
-                            pretrainG = gr.Textbox(label=translations["pretrained_url"].format(dg="G"), value="", info=translations["only_huggingface"], placeholder="https://...", interactive=True, scale=4)
-                        download_pretrain_button = gr.Button(translations["downloads"], scale=2)
-                    with gr.Column():
-                        with gr.Row():
-                            pretrain_choices = gr.Dropdown(label=translations["select_pretrain"], info=translations["select_pretrain_info"], choices=list(fetch_pretrained_data().keys()), value="Titan_Medium", allow_custom_value=True, interactive=True, scale=6, visible=False)
-                            sample_rate_pretrain = gr.Dropdown(label=translations["pretrain_sr"], info=translations["pretrain_sr"], choices=["48k", "40k", "32k"], value="48k", interactive=True, visible=False)
-                        download_pretrain_choices_button = gr.Button(translations["downloads"], scale=2, variant="primary", visible=False)
-                    with gr.Row():
-                        pretrain_upload_g = gr.File(label=translations["drop_pretrain"].format(dg="G"), file_types=[".pth"], visible=False)
-                        pretrain_upload_d = gr.File(label=translations["drop_pretrain"].format(dg="D"), file_types=[".pth"], visible=False)
-            with gr.Row():
-                url_download.click(
-                    fn=download_model, 
-                    inputs=[
-                        url_input, 
-                        download_model_name
-                    ], 
-                    outputs=[url_input],
-                    api_name="download_model"
-                )
-                download_from_browser.click(
-                    fn=lambda model: download_model(models[model], model), 
-                    inputs=[model_browser], 
-                    outputs=[model_browser],
-                    api_name="download_browser"
-                )
-            with gr.Row():
-                downloadmodel.change(fn=change_download_choices, inputs=[downloadmodel], outputs=[url_input, download_model_name, url_download, model_browser, download_from_browser, search_name, search, search_dropdown, download, model_upload])
-                search.click(fn=search_models, inputs=[search_name], outputs=[search_dropdown, download])
-                model_upload.upload(fn=save_drop_model, inputs=[model_upload], outputs=[model_upload])
-                download.click(
-                    fn=lambda model: download_model(model_options[model], model), 
-                    inputs=[search_dropdown], 
-                    outputs=[search_dropdown],
-                    api_name="search_models"
-                )
-            with gr.Row():
-                pretrain_download_choices.change(fn=change_download_pretrained_choices, inputs=[pretrain_download_choices], outputs=[pretrainD, pretrainG, download_pretrain_button, pretrain_choices, sample_rate_pretrain, download_pretrain_choices_button, pretrain_upload_d, pretrain_upload_g])
-                pretrain_choices.change(fn=update_sample_rate_dropdown, inputs=[pretrain_choices], outputs=[sample_rate_pretrain])
-            with gr.Row():
-                download_pretrain_button.click(
-                    fn=download_pretrained_model,
-                    inputs=[
-                        pretrain_download_choices, 
-                        pretrainD, 
-                        pretrainG
-                    ],
-                    outputs=[pretrainD],
-                    api_name="download_pretrain_link"
-                )
-                download_pretrain_choices_button.click(
-                    fn=download_pretrained_model,
-                    inputs=[
-                        pretrain_download_choices, 
-                        pretrain_choices, 
-                        sample_rate_pretrain
-                    ],
-                    outputs=[pretrain_choices],
-                    api_name="download_pretrain_choices"
-                )
-                pretrain_upload_g.upload(
-                    fn=lambda pretrain_upload_g: shutil.move(pretrain_upload_g.name, os.path.join("assets", "models", "pretrained_custom")), 
-                    inputs=[pretrain_upload_g], 
-                    outputs=[],
-                    api_name="upload_pretrain_g"
-                )
-                pretrain_upload_d.upload(
-                    fn=lambda pretrain_upload_d: shutil.move(pretrain_upload_d.name, os.path.join("assets", "models", "pretrained_custom")), 
-                    inputs=[pretrain_upload_d], 
-                    outputs=[],
-                    api_name="upload_pretrain_d"
-                )
 
         with gr.TabItem(translations["f0_extractor_tab"], visible=configs.get("f0_extractor_tab", True)):
             gr.Markdown(translations["f0_extractor_markdown"])
@@ -1537,7 +1548,7 @@ with gr.Blocks(title=" Ultimate RVC Maker ⚡", theme=theme) as app:
     
     with gr.Row(): 
         gr.Markdown(translations["terms_of_use"])
-    with gr.Row():
+    
         gr.Markdown(translations["exemption"])
 
     logger.info(translations["start_app"])
