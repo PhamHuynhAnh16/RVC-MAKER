@@ -1090,8 +1090,9 @@ with gr.Blocks(title=" Ultimate RVC Maker ⚡", theme=theme) as app:
                             total_epochs = gr.Slider(label=translations["total_epoch"], info=translations["total_epoch_info"], minimum=1, maximum=10000, value=300, step=1, interactive=True)
                             save_epochs = gr.Slider(label=translations["save_epoch"], info=translations["save_epoch_info"], minimum=1, maximum=10000, value=50, step=1, interactive=True)
                         with gr.Column():
-                            index_button = gr.Button(f"3. {translations['create_index']}", variant="primary", scale=2)
-                            training_button = gr.Button(f"4. {translations['training_model']}", variant="primary", scale=2)
+                            with gr.Row():
+                                index_button = gr.Button(f"3. {translations['create_index']}", variant="primary", scale=2)
+                                training_button = gr.Button(f"4. {translations['training_model']}", variant="primary", scale=2)
                     with gr.Row():
                         with gr.Accordion(label=translations["setting"], open=False):
                             with gr.Row():
@@ -1529,21 +1530,7 @@ with gr.Blocks(title=" Ultimate RVC Maker ⚡", theme=theme) as app:
             with gr.Row():
                 audioldm2_stop.click(fn=lambda: stop_pid("audioldm2_pid", None, False), inputs=[], outputs=[])
 
-        with gr.TabItem(translations["report_bugs"], visible=configs.get("report_bug_tab", True)):
-            gr.Markdown(translations["report_bugs"])
-            with gr.Row():
-                gr.Markdown(translations["report_bug_info"])
-            with gr.Row():
-                with gr.Column():
-                    with gr.Group():
-                        agree_log = gr.Checkbox(label=translations["agree_log"], value=True, interactive=True) 
-                        report_text = gr.Textbox(label=translations["error_info"], info=translations["error_info_2"], interactive=True)
-                    report_button = gr.Button(translations["report_bugs"], variant="primary", scale=2)
-            with gr.Row():
-                gr.Markdown(translations["report_info"].format(github=codecs.decode("uggcf://tvguho.pbz/CunzUhlauNau16/Ivrganzrfr-EIP/vffhrf", "rot13")))
-            with gr.Row():
-                report_button.click(fn=report_bug, inputs=[report_text, agree_log], outputs=[])
-
+        
     
     with gr.Row(): 
         gr.Markdown(translations["terms_of_use"])
