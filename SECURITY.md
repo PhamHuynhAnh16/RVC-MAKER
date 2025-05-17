@@ -7,5 +7,5 @@
 | colab   | :white_check_mark: |
 | kaggle   | :x:                |
 | windows   | :white_check_mark: |
-| linux   | :x:                |
+| linux   | :white_check_mark:                |
 
