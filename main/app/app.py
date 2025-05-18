@@ -11,11 +11,11 @@ import gradio as gr
 import soundfile as sf
 from time import sleep
 from multiprocessing import cpu_count
+
+sys.path.append(os.getcwd())
 from main.app.tabs.inference.inference import inference_tabs
 from main.app.tabs.models.model import model_tabs
 from main.app.tabs.utils.utils import utils_tabs
-
-sys.path.append(os.getcwd())
 
 from main.tools import huggingface
 from main.configs.config import Config
