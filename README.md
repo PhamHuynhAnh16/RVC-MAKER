@@ -9,7 +9,7 @@
 A high-quality voice conversion tool focused on ease of use and performance.
 
 [![RVC MAKER](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/TheNeodev/RVC-MAKER)
-[![Open In Colab](https://img.shields.io/badge/Colab-F9AB00?style=for-the-badge&logo=googlecolab&color=525252)](https://colab.research.google.com/github/TheNeodev/RVC-MAKER/blob/main/webui.ipynb)
+[![Open In Colab](https://img.shields.io/badge/Colab-F9AB00?style=for-the-badge&logo=googlecolab&color=525252)](https://colab.research.google.com/github/TheNeodev/Notebook/blob/main/RVC-MAKER.ipynb)
 [![Licence](https://img.shields.io/github/license/saltstack/salt?style=for-the-badge)](https://github.com/TheNeodev/RVC-MAKER/blob/main/LICENSE)
 
 [![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/spaces/NeoPy/RVC-MAKER)
