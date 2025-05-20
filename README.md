@@ -85,13 +85,19 @@ python -m venv envenv\Scripts\activate
 If you have an NVIDIA GPU, run this step depending on your CUDA version (you may need to change cu117 to cu128, etc.):
 
 If using Torch 2.3.1
+```
 python -m pip install torch==2.3.1 torchaudio==2.3.1 torchvision==0.18.1 --index-url https://download.pytorch.org/whl/cu117
+```
+
 If using Torch 2.6.0
+```
 python -m pip install torch==2.6.0 torchaudio==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu117
+```
 
 Then run:
-
+```
 python -m pip install -r requirements.txt
+```
 
 - **Step 6**: Run the `run_app` file to open the user interface (Note: Do not close the Command Prompt or Terminal for the interface)
 - Alternatively, use Command Prompt or Terminal in the source code directory
