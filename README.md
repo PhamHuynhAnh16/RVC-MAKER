@@ -105,22 +105,25 @@ python -m pip install -r requirements.txt
 - Alternatively, use Command Prompt or Terminal in the source code directory
 - To allow the interface to access files outside the project, add `--allow_all_disk` to the command:
 
-````
+```
 env\Scripts\python.exe main\app\app.py --open
 ```
 
 **To use TensorBoard for training monitoring**:
 
+Run the file: tensorboard or the command
+
 ```
-Run the file: tensorboard or the command env\Scripts\python.exe main\app\tensorboard.py
+env\Scripts\python.exe main\app\tensorboard.py
 ```
 
 # Command-Line Usage
+
 ```
 python main\app\parser.py --help
+
 ```
 
-</pre>
 
 # NOTES
 
