@@ -79,8 +79,10 @@ This project is all in one, easy-to-use voice conversion tool. With the goal of 
 - **Step 3**: Download and extract the source code
 - **Step 4**: Navigate to the source code directory and open Command Prompt or Terminal
 - **Step 5**: Run the command to install the required libraries
-
+  
+```
 python -m venv envenv\Scripts\activate
+```
 
 If you have an NVIDIA GPU, run this step depending on your CUDA version (you may need to change cu117 to cu128, etc.):
 
@@ -103,15 +105,20 @@ python -m pip install -r requirements.txt
 - Alternatively, use Command Prompt or Terminal in the source code directory
 - To allow the interface to access files outside the project, add `--allow_all_disk` to the command:
 
+````
 env\Scripts\python.exe main\app\app.py --open
+```
 
 **To use TensorBoard for training monitoring**:
 
+```
 Run the file: tensorboard or the command env\Scripts\python.exe main\app\tensorboard.py
+```
 
 # Command-Line Usage
-
+```
 python main\app\parser.py --help
+```
 
 </pre>
 
