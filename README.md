@@ -25,6 +25,11 @@ A high-quality voice conversion tool focused on ease of use and performance.
 # Description
 This project is all in one, easy-to-use voice conversion tool. With the goal of creating high-quality and high-performance voice conversion products, the project allows users to change voices smoothly and naturally.
 
+
+# ToDo Features
+
+- Cli for colab notebook
+
 # Project Features
 
 - Music separation (MDX-Net/Demucs)
