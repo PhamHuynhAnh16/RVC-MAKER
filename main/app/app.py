@@ -21,6 +21,36 @@ from main.tools import huggingface
 from main.configs.config import Config
 from main.app.based.utils import *
 
+
+def restart_app():
+    global app
+
+    gr_info(translations["15s"])
+    os.system("cls" if platform.system() == "Windows" else "clear")
+    
+    app.close()
+    subprocess.run([python, os.path.join("main", "app", "app.py")] + sys.argv[1:])
+
+def change_language(lang):
+    configs = json.load(open(configs_json, "r"))
+    configs["language"] = lang
+
+    with open(configs_json, "w") as f:
+        json.dump(configs, f, indent=4)
+
+    restart_app()
+
+def change_theme(theme):
+    with open(configs_json, "r") as f:
+        configs = json.load(f)
+
+    configs["theme"] = theme
+    with open(configs_json, "w") as f:
+        json.dump(configs, f, indent=4)
+
+    restart_app()
+
+
 with gr.Blocks(title="Ultimate RVC Maker ⚡", theme=theme) as app:
     gr.HTML("<h1 style='text-align: center;'>Ultimate RVC Maker ⚡</h1>")
     
