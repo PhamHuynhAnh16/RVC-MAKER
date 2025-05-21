@@ -8,6 +8,7 @@
     ],
     "theme": "gradio/default",
     "themes": [
+        "Thatguy099/Sonix",
         "NoCrypt/miku",
         "gstaff/xkcd",
         "JohnSmith9982/small_and_pretty",
