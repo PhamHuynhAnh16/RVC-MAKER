@@ -1,5 +1,9 @@
+# <h1 align="center"><b> Ultimate RVC Maker 🎵 </b></h1>
 <div align="center">
-<img alt="LOGO" src="assets/ico.png" width="300" height="300" /><div align="center">
+
+
+
+<div align="center">
   <img src="https://count.nett.moe/get/foo/img?theme=rule34" alt="yeh"></div>
 
 </div>
