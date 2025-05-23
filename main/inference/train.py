@@ -17,7 +17,7 @@ import torch.distributed as dist
 import torch.utils.data as tdata
 import torch.multiprocessing as mp
 
-from tqdm import tqdm
+from rich.progress import Progress, BarColumn, TextColumn, TimeRemainingColumn
 from collections import OrderedDict
 from random import randint, shuffle
 from torch.utils.checkpoint import checkpoint
@@ -830,7 +830,14 @@ def train_and_evaluate(rank, epoch, hps, nets, optims, scaler, train_loader, wri
     else: data_iterator = enumerate(train_loader)
 
     epoch_recorder = EpochRecorder()
-    with tqdm(total=len(train_loader), leave=False) as pbar:
+    with Progress(
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+        TimeRemainingColumn(),
+        transient=True
+    ) as pbar:
+        task = pbar.add_task(f"Epoch {epoch}", total=len(train_loader))
         for batch_idx, info in data_iterator:
             if device.type == "cuda" and not cache_data_in_gpu: info = [tensor.cuda(device_id, non_blocking=True) for tensor in info]
             elif device.type != "cuda": info = [tensor.to(device) for tensor in info]
@@ -895,7 +902,7 @@ def train_and_evaluate(rank, epoch, hps, nets, optims, scaler, train_loader, wri
                 summarize(writer=writer, global_step=global_step, images={"slice/mel_org": plot_spectrogram_to_numpy(y_mel[0].data.cpu().numpy()), "slice/mel_gen": plot_spectrogram_to_numpy(y_hat_mel[0].data.cpu().numpy()), "all/mel": plot_spectrogram_to_numpy(mel[0].data.cpu().numpy())}, scalars=scalar_dict, audios={f"gen/audio_{global_step:07d}": o[0, :, :]}, audio_sample_rate=config.data.sample_rate)
 
             global_step += 1
-            pbar.update(1)
+            pbar.advance(task)
 
     def check_overtraining(smoothed_loss_history, threshold, epsilon=0.004):
         if len(smoothed_loss_history) < threshold + 1: return False
