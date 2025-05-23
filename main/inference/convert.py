@@ -16,7 +16,7 @@ import numpy as np
 import soundfile as sf
 import torch.nn.functional as F
 
-from tqdm import tqdm
+from rich.progress import Progress, BarColumn, TextColumn, TimeRemainingColumn
 from scipy import signal
 from distutils.util import strtobool
 
@@ -398,7 +398,7 @@ class VC:
                 index = big_npy = None
         else: index = big_npy = None
 
-        pbar.update(1)
+        pbar.advance(pbar.task, 1)
         opt_ts, audio_opt = [], []
         audio = signal.filtfilt(bh, ah, audio)
         audio_pad = np.pad(audio, (self.window // 2, self.window // 2), mode="reflect")
@@ -431,14 +431,14 @@ class VC:
                 logger.error(translations["error_readfile"])
                 inp_f0 = None
 
-        pbar.update(1)
+        pbar.advance(pbar.task, 1)
         if pitch_guidance:
             pitch, pitchf = self.get_f0(audio_pad, p_len, pitch, f0_method, filter_radius, hop_length, f0_autotune, f0_autotune_strength, inp_f0, onnx_mode=f0_onnx)
             pitch, pitchf = pitch[:p_len], pitchf[:p_len]
             if self.device == "mps": pitchf = pitchf.astype(np.float32)
             pitch, pitchf = torch.tensor(pitch, device=self.device).unsqueeze(0).long(), torch.tensor(pitchf, device=self.device).unsqueeze(0).float()
 
-        pbar.update(1)
+        pbar.advance(pbar.task, 1)
         for t in opt_ts:
             t = t // self.window * self.window
             audio_opt.append(self.voice_conversion(model, net_g, sid, audio_pad[s : t + self.t_pad2 + self.window], pitch[:, s // self.window : (t + self.t_pad2) // self.window] if pitch_guidance else None, pitchf[:, s // self.window : (t + self.t_pad2) // self.window] if pitch_guidance else None, index, big_npy, index_rate, version, protect)[self.t_pad_tgt : -self.t_pad_tgt])    
@@ -453,7 +453,7 @@ class VC:
         if pitch_guidance: del pitch, pitchf
         del sid
         clear_gpu_cache()
-        pbar.update(1)
+        pbar.advance(pbar.task, 1)
 
         return audio_opt
 
@@ -478,45 +478,58 @@ class VoiceConverter:
 
     def convert_audio(self, audio_input_path, audio_output_path, index_path, embedder_model, pitch, f0_method, index_rate, volume_envelope, protect, hop_length, f0_autotune, f0_autotune_strength, filter_radius, clean_audio, clean_strength, export_format, resample_sr = 0, checkpointing = False, f0_file = None, f0_onnx = False, embedders_mode = "fairseq", formant_shifting = False, formant_qfrency = 0.8, formant_timbre = 0.8, split_audio = False):
         try:
-            with tqdm(total=10, desc=translations["convert_audio"], ncols=100, unit="a") as pbar:
+            with Progress(
+                TextColumn("[progress.description]{task.description}"),
+                BarColumn(),
+                "[progress.percentage]{task.percentage:>3.0f}%",
+                TimeRemainingColumn(),
+                transient=True
+            ) as progress:
+                total_steps = 10
+                if split_audio:
+                    audio = load_audio(logger, audio_input_path, self.sample_rate, formant_shifting=formant_shifting, formant_qfrency=formant_qfrency, formant_timbre=formant_timbre)
+                    chunks = cut(audio, self.sample_rate, db_thresh=-60, min_interval=500)
+                    total_steps = len(chunks) * 4 + 6
+                task = progress.add_task(translations["convert_audio"], total=total_steps)
+                progress.update(task, advance=0)
+                
                 audio = load_audio(logger, audio_input_path, self.sample_rate, formant_shifting=formant_shifting, formant_qfrency=formant_qfrency, formant_timbre=formant_timbre)
                 self.checkpointing = checkpointing
                 audio_max = np.abs(audio).max() / 0.95
                 if audio_max > 1: audio /= audio_max
 
-                pbar.update(1)
+                progress.advance(task, 1)
                 if not self.hubert_model:
                     models, _, embed_suffix = load_embedders_model(embedder_model, embedders_mode, providers=get_providers())
                     self.hubert_model = (models.to(self.device).half() if self.config.is_half else models.to(self.device).float()).eval() if embed_suffix in [".pt", ".safetensors"] else models
                     self.embed_suffix = embed_suffix
 
-                pbar.update(1)
+                progress.advance(task, 1)
                 if self.tgt_sr != resample_sr >= self.sample_rate: self.tgt_sr = resample_sr
                 target_sr = min([8000, 11025, 12000, 16000, 22050, 24000, 32000, 44100, 48000, 96000], key=lambda x: abs(x - self.tgt_sr))
 
                 if split_audio:
                     chunks = cut(audio, self.sample_rate, db_thresh=-60, min_interval=500)  
-                    pbar.total = len(chunks) * 4 + 6
                     logger.info(f"{translations['split_total']}: {len(chunks)}")
                 else: chunks = [(audio, 0, 0)]
 
                 converted_chunks = []
-                pbar.update(1)
+                progress.advance(task, 1)
 
                 for waveform, start, end in chunks:
-                    converted_chunks.append((start, end, self.vc.pipeline(model=self.hubert_model, net_g=self.net_g, sid=self.sid, audio=waveform, pitch=pitch, f0_method=f0_method, file_index=(index_path.strip().strip('"').strip("\n").strip('"').strip().replace("trained", "added")), index_rate=index_rate, pitch_guidance=self.use_f0, filter_radius=filter_radius, volume_envelope=volume_envelope, version=self.version, protect=protect, hop_length=hop_length, f0_autotune=f0_autotune, f0_autotune_strength=f0_autotune_strength, suffix=self.suffix, embed_suffix=self.embed_suffix, f0_file=f0_file, f0_onnx=f0_onnx, pbar=pbar)))
+                    converted_chunks.append((start, end, self.vc.pipeline(model=self.hubert_model, net_g=self.net_g, sid=self.sid, audio=waveform, pitch=pitch, f0_method=f0_method, file_index=(index_path.strip().strip('"').strip("\n").strip('"').strip().replace("trained", "added")), index_rate=index_rate, pitch_guidance=self.use_f0, filter_radius=filter_radius, volume_envelope=volume_envelope, version=self.version, protect=protect, hop_length=hop_length, f0_autotune=f0_autotune, f0_autotune_strength=f0_autotune_strength, suffix=self.suffix, embed_suffix=self.embed_suffix, f0_file=f0_file, f0_onnx=f0_onnx, pbar=progress)))
                 
-                pbar.update(1)
+                progress.advance(task, 1)
                 audio_output = restore(converted_chunks, total_len=len(audio), dtype=converted_chunks[0][2].dtype) if split_audio else converted_chunks[0][2]
                 if target_sr >= self.sample_rate and self.tgt_sr != target_sr: audio_output = librosa.resample(audio_output, orig_sr=self.tgt_sr, target_sr=target_sr, res_type="soxr_vhq")
 
-                pbar.update(1)
+                progress.advance(task, 1)
                 if clean_audio:
                     from main.tools.noisereduce import reduce_noise
                     audio_output = reduce_noise(y=audio_output, sr=target_sr, prop_decrease=clean_strength, device=self.device) 
 
                 sf.write(audio_output_path, audio_output, target_sr, format=export_format)
-                pbar.update(1)
+                progress.advance(task, 1)
         except Exception as e:
             logger.error(translations["error_convert"].format(e=e))
             import traceback
