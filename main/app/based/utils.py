@@ -377,8 +377,19 @@ def download_url(url):
 
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore")
-        ydl_opts = {"format": "bestaudio/best", "postprocessors": [{"key": "FFmpegExtractAudio", "preferredcodec": "wav", "preferredquality": "192"}], "quiet": True, "no_warnings": True, "noplaylist": True, "verbose": False}
-
+        ydl_opts = {
+            "format": "bestaudio/best",
+            "postprocessors": [{
+                "key": "FFmpegExtractAudio",
+                "preferredcodec": "wav",
+                "preferredquality": "192"
+            }],
+            "quiet": True,            
+            "no_warnings": True,
+            "noplaylist": True,
+            "verbose": False,
+            "cookiefile": "assets/yt-dlp/config.txt"
+        }
         gr_info(translations["start"].format(start=translations["download_music"]))
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
