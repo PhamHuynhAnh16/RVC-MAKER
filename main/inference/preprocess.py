@@ -9,7 +9,7 @@ import logging.handlers
 import numpy as np
 import torch.multiprocessing as mp
 
-from tqdm import tqdm
+from rich.progress import Progress, BarColumn, TimeElapsedColumn, TextColumn
 from scipy import signal
 from scipy.io import wavfile
 from distutils.util import strtobool
@@ -207,7 +207,13 @@ def preprocess_training_set(input_root, sr, num_processes, exp_dir, per, cut_pre
         except ValueError:
             raise ValueError(f"{translations['not_integer']} '{os.path.basename(root)}'.")
 
-    with tqdm(total=len(files), ncols=100, unit="f") as pbar:
+    with Progress(
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+        TimeElapsedColumn()
+    ) as progress:
+        task = progress.add_task("[cyan]Processing files...", total=len(files))
         with ProcessPoolExecutor(max_workers=num_processes) as executor:
             futures = [executor.submit(process_file, (pp, file, cut_preprocess, process_effects, clean_dataset, clean_strength)) for file in files]
             for future in as_completed(futures):
@@ -215,8 +221,8 @@ def preprocess_training_set(input_root, sr, num_processes, exp_dir, per, cut_pre
                     future.result() 
                 except Exception as e:
                     raise RuntimeError(f"{translations['process_error']}: {e}")
-                pbar.update(1)
-                logger.debug(pbar.format_meter(pbar.n, pbar.total, pbar.format_dict["elapsed"]))
+                progress.update(task, advance=1)
+                logger.debug(progress.tasks[0].get_description())
 
     elapsed_time = time.time() - start_time
     logger.info(translations["preprocess_success"].format(elapsed_time=f"{elapsed_time:.2f}"))
