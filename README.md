@@ -36,28 +36,32 @@ This project is all in one, easy-to-use voice conversion tool. With the goal of 
 
 # Project Features
 
-- Music separation (MDX-Net/Demucs) |
-- Voice conversion (File conversion/Batch conversion/Conversion with Whisper/Text-to-speech conversion) |
-- Background music editing |
-- Apply effects to audio |
-- Generate training data (From linked paths) |
-- Model training (v1/v2, high-quality encoders) |
-- Model fusion |
-- Read model information |
-- Export models to ONNX |
-- Download from pre-existing model repositories |
-- Search for models on the web |
-- Pitch extraction |
-- Support for audio conversion inference using ONNX models |
-- ONNX RVC models also support indexing for inference |
-- Multiple model options: |
-  - **F0**: `pm, dio, mangio-crepe-tiny, mangio-crepe-small, mangio-crepe-medium, mangio-crepe-large, mangio-crepe-full, crepe-tiny, crepe-small, crepe-medium, crepe-large, crepe-full, fcpe, fcpe-legacy, rmvpe, rmvpe-legacy, harvest, yin, pyin, swipe` |
-  - **F0_ONNX**: Some models are converted to ONNX to support accelerated extraction |
-  - **F0_HYBRID**: Multiple options can be combined, such as `hybrid[rmvpe+harvest]`, or you can try combining all options together |
-  - **EMBEDDERS**: `contentvec_base, hubert_base, japanese_hubert_base, korean_hubert_base, chinese_hubert_base, portuguese_hubert_base` |
-  - **EMBEDDERS_ONNX**: All the above embedding models have ONNX versions pre-converted for accelerated embedding extraction |
-  - **EMBEDDERS_TRANSFORMERS**: All the above embedding models have versions pre-converted to Hugging Face for use as an alternative to Fairseq |
-  - **SPIN_EMBEDDERS**: A new embedding extraction model that may provide higher quality than older extractions |
+| Feature | Description |
+|---------|-------------|
+| **Music Separation** | Utilizes MDX-Net and Demucs for separating audio tracks. |
+| **Voice Conversion** | Supports file conversion, batch conversion, conversion with Whisper, and text-to-speech conversion. |
+| **Background Music Editing** | Enables editing and manipulation of background music tracks. |
+| **Apply Effects to Audio** | Allows application of various effects to enhance or modify audio output. |
+| **Generate Training Data** | Creates training data from linked paths for model training. |
+| **Model Training** | Supports v1 and v2 models with high-quality encoders for training. |
+| **Model Fusion** | Facilitates combining multiple models for enhanced performance. |
+| **Read Model Information** | Provides functionality to access and display model metadata. |
+| **Export Models to ONNX** | Enables exporting trained models to ONNX format for compatibility. |
+| **Download from Pre-existing Model Repositories** | Allows downloading models from established repositories. |
+| **Search for Models on the Web** | Supports searching for models online for easy access. |
+| **Pitch Extraction** | Extracts pitch information from audio inputs. |
+| **Support for Audio Conversion Inference Using ONNX Models** | Enables inference for audio conversion using ONNX-compatible models. |
+| **ONNX RVC Models with Indexing** | Supports ONNX RVC models with indexing for efficient inference. |
+| **Multiple Model Options** | |
+| | **F0**: `pm, dio, mangio-crepe-tiny, mangio-crepe-small, mangio-crepe-medium, mangio-crepe-large, mangio-crepe-full, crepe-tiny, crepe-small, crepe-medium, crepe-large, crepe-full, fcpe, fcpe-legacy, rmvpe, rmvpe-legacy, harvest, yin, pyin, swipe` |
+| | **F0_ONNX**: Some models converted to ONNX for accelerated pitch extraction. |
+| | **F0_HYBRID**: Combines multiple options, e.g., `hybrid[rmvpe+harvest]`, or all options together. |
+| | **EMBEDDERS**: `contentvec_base, hubert_base, japanese_hubert_base, korean_hubert_base, chinese_hubert_base, portuguese_hubert_base` |
+| | **EMBEDDERS_ONNX**: Pre-converted ONNX versions of embedding models for accelerated extraction. |
+| | **EMBEDDERS_TRANSFORMERS**: Pre-converted Hugging Face versions of embedding models as an alternative to Fairseq. |
+| | **SPIN_EMBEDDERS**: A new embedding extraction model offering potentially higher quality than older methods. |
+
+___
 
 # Installation and Usage
 
