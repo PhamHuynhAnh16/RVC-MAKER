@@ -36,50 +36,28 @@ This project is all in one, easy-to-use voice conversion tool. With the goal of 
 
 # Project Features
 
-- Music separation (MDX-Net/Demucs)
-
-- Voice conversion (File conversion/Batch conversion/Conversion with Whisper/Text-to-speech conversion)
-
-- Background music editing
-
-- Apply effects to audio
-
-- Generate training data (From linked paths)
-
-- Model training (v1/v2, high-quality encoders)
-
-- Model fusion
-
-- Read model information
-
-- Export models to ONNX
-
-- Download from pre-existing model repositories
-
-- Search for models on the web
-
-- Pitch extraction
-
-- Support for audio conversion inference using ONNX models
-
-- ONNX RVC models also support indexing for inference
-
-- Multiple model options:
-
-**F0**: `pm, dio, mangio-crepe-tiny, mangio-crepe-small, mangio-crepe-medium, mangio-crepe-large, mangio-crepe-full, crepe-tiny, crepe-small, crepe-medium, crepe-large, crepe-full, fcpe, fcpe-legacy, rmvpe, rmvpe-legacy, harvest, yin, pyin, swipe`
-
-**F0_ONNX**: Some models are converted to ONNX to support accelerated extraction
-
-**F0_HYBRID**: Multiple options can be combined, such as `hybrid[rmvpe+harvest]`, or you can try combining all options together
-
-**EMBEDDERS**: `contentvec_base, hubert_base, japanese_hubert_base, korean_hubert_base, chinese_hubert_base, portuguese_hubert_base`
-
-**EMBEDDERS_ONNX**: All the above embedding models have ONNX versions pre-converted for accelerated embedding extraction
-
-**EMBEDDERS_TRANSFORMERS**: All the above embedding models have versions pre-converted to Hugging Face for use as an alternative to Fairseq
-
-**SPIN_EMBEDDERS**: A new embedding extraction model that may provide higher quality than older extractions
-
+- Music separation (MDX-Net/Demucs) |
+- Voice conversion (File conversion/Batch conversion/Conversion with Whisper/Text-to-speech conversion) |
+- Background music editing |
+- Apply effects to audio |
+- Generate training data (From linked paths) |
+- Model training (v1/v2, high-quality encoders) |
+- Model fusion |
+- Read model information |
+- Export models to ONNX |
+- Download from pre-existing model repositories |
+- Search for models on the web |
+- Pitch extraction |
+- Support for audio conversion inference using ONNX models |
+- ONNX RVC models also support indexing for inference |
+- Multiple model options: |
+  - **F0**: `pm, dio, mangio-crepe-tiny, mangio-crepe-small, mangio-crepe-medium, mangio-crepe-large, mangio-crepe-full, crepe-tiny, crepe-small, crepe-medium, crepe-large, crepe-full, fcpe, fcpe-legacy, rmvpe, rmvpe-legacy, harvest, yin, pyin, swipe` |
+  - **F0_ONNX**: Some models are converted to ONNX to support accelerated extraction |
+  - **F0_HYBRID**: Multiple options can be combined, such as `hybrid[rmvpe+harvest]`, or you can try combining all options together |
+  - **EMBEDDERS**: `contentvec_base, hubert_base, japanese_hubert_base, korean_hubert_base, chinese_hubert_base, portuguese_hubert_base` |
+  - **EMBEDDERS_ONNX**: All the above embedding models have ONNX versions pre-converted for accelerated embedding extraction |
+  - **EMBEDDERS_TRANSFORMERS**: All the above embedding models have versions pre-converted to Hugging Face for use as an alternative to Fairseq |
+  - **SPIN_EMBEDDERS**: A new embedding extraction model that may provide higher quality than older extractions |
 
 # Installation and Usage
 
