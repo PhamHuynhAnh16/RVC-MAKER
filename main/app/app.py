@@ -22,6 +22,169 @@ from main.configs.config import Config
 from main.app.based.utils import *
 
 
+css = 
+"""
+/* Smooth transitions for tabs */
+.gradio-container .tabs {
+    transition: all 0.3s ease-in-out;
+}
+
+.gradio-container .tabitem {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.gradio-container .tabitem[style*="display: block"] {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Button hover and click animations */
+button {
+    transition: all 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    background-color: #f0f0f0;
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+button.primary {
+    background-color: #007bff;
+    color: white;
+}
+
+button.primary:hover {
+    background-color: #0056b3;
+}
+
+button.secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+button.secondary:hover {
+    background-color: #545b62;
+}
+
+/* Slider animations */
+input[type="range"] {
+    transition: all 0.2s ease;
+}
+
+input[type="range"]:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    transition: all 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+/* Accordion animations */
+.gradio-container .accordion {
+    transition: all 0.3s ease;
+}
+
+.gradio-container .accordion > div {
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.gradio-container .accordion[open] > div {
+    max-height: 1000px; /* Adjust based on content */
+    opacity: 1;
+}
+
+.gradio-container .accordion:not([open]) > div {
+    max-height: 0;
+    opacity: 0;
+}
+
+/* Dropdown animations */
+select {
+    transition: all 0.2s ease;
+}
+
+select:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+select:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Audio and file input animations */
+.gradio-container .audio, .gradio-container .file {
+    transition: all 0.3s ease;
+}
+
+.gradio-container .audio:hover, .gradio-container .file:hover {
+    transform: scale(1.01);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Row and column transitions for dynamic visibility */
+.gradio-container .row, .gradio-container .column {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.gradio-container .row[style*="display: none"], .gradio-container .column[style*="display: none"] {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.gradio-container .row[style*="display: flex"], .gradio-container .column[style*="display: block"] {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Markdown and text animations */
+.gradio-container .markdown, .gradio-container .textbox {
+    transition: opacity 0.3s ease;
+}
+
+.gradio-container .markdown:empty, .gradio-container .textbox:empty {
+    opacity: 0;
+}
+
+.gradio-container .markdown:not(:empty), .gradio-container .textbox:not(:empty) {
+    opacity: 1;
+}
+
+/* Dark mode adjustments */
+body.dark button:hover {
+    background-color: #555;
+}
+
+body.dark select:hover {
+    background-color: #444;
+}
+
+body.dark .gradio-container .audio:hover, body.dark .gradio-container .file:hover {
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+}
+
+/* General smooth transitions for visibility changes */
+.gradio-container [style*="display"] {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+"""
+
+
 def restart_app():
     global app
 
@@ -51,7 +214,7 @@ def change_theme(theme):
     restart_app()
 
 
-with gr.Blocks(title="Ultimate RVC Maker ⚡", theme=theme) as app:
+with gr.Blocks(title="Ultimate RVC Maker ⚡", theme=theme, css=css) as app:
     gr.HTML("<h1 style='text-align: center;'>Ultimate RVC Maker ⚡</h1>")
     
     with gr.Tabs():      
