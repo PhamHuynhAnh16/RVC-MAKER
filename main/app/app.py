@@ -22,8 +22,7 @@ from main.configs.config import Config
 from main.app.based.utils import *
 
 
-css = 
-"""
+css =  """
 /* Smooth transitions for tabs */
 .gradio-container .tabs {
     transition: all 0.3s ease-in-out;
