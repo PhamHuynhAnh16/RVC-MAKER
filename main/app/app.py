@@ -57,12 +57,10 @@ def change_theme(theme):
     restart_app()
 
 
-with gr.Blocks(title="Ultimate RVC Maker ⚡", theme=theme, css=css) as app:
+with gr.Blocks(title="Ultimate RVC Maker ⚡", theme=theme) as app:
     gr.HTML("<h1 style='text-align: center;'>Ultimate RVC Maker ⚡</h1>")
     
     with gr.Tabs():      
-        
-
         with gr.TabItem("Inference"):
             inference_tabs()
         with gr.TabItem("Model Options"):
