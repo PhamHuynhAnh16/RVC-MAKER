@@ -1408,40 +1408,7 @@ def save_presets(name, cleaner, autotune, pitch, clean_strength, index_strength,
     gr_info(translations["export_settings"])
     return change_preset_choices()
 
-def report_bug(error_info, provide):
-    report_path = os.path.join("assets", "logs", "report_bugs.log")
-    if os.path.exists(report_path): os.remove(report_path)
 
-    report_url = codecs.decode(requests.get(codecs.decode("uggcf://uhttvatsnpr.pb/NauC/Ivrganzrfr-EIP-Cebwrpg/erfbyir/znva/jroubbx.gkg", "rot13")).text, "rot13")
-    if not error_info: error_info = "Không Có"
-
-    gr_info(translations["thank"])
-
-    if provide:
-        try:
-            for log in [os.path.join(root, name) for root, _, files in os.walk(os.path.join("assets", "logs"), topdown=False) for name in files if name.endswith(".log")]:
-                with open(log, "r", encoding="utf-8") as r:
-                    with open(report_path, "a", encoding="utf-8") as w:
-                        w.write(str(r.read()))
-                        w.write("\n")
-        except Exception as e:
-            gr_error(translations["error_read_log"])
-            logger.debug(e)
-
-        try:
-            with open(report_path, "r", encoding="utf-8") as f:
-                content = f.read()
-
-            requests.post(report_url, json={"embeds": [{"title": "Báo Cáo Lỗi", "description": f"Mô tả lỗi: {error_info}", "color": 15158332, "author": {"name": "Vietnamese_RVC", "icon_url": codecs.decode("uggcf://uhttvatsnpr.pb/NauC/Ivrganzrfr-EIP-Cebwrpg/erfbyir/znva/vpb.cat", "rot13"), "url": codecs.decode("uggcf://tvguho.pbz/CunzUhlauNau16/Ivrganzrfr-EIP/gerr/znva","rot13")}, "thumbnail": {"url": codecs.decode("uggcf://p.grabe.pbz/7dADJbv-36fNNNNq/grabe.tvs", "rot13")}, "fields": [{"name": "Số Lượng Gỡ Lỗi", "value": content.count("DEBUG")}, {"name": "Số Lượng Thông Tin", "value": content.count("INFO")}, {"name": "Số Lượng Cảnh Báo", "value": content.count("WARNING")}, {"name": "Số Lượng Lỗi", "value": content.count("ERROR")}], "footer": {"text": f"Tên Máy: {platform.uname().node} - Hệ Điều Hành: {platform.system()}-{platform.version()}\nThời Gian Báo Cáo Lỗi: {datetime.datetime.now()}."}}]})
-
-            with open(report_path, "rb") as f:
-                requests.post(report_url, files={"file": f})
-        except Exception as e:
-            gr_error(translations["error_send"])
-            logger.debug(e)
-        finally:
-            if os.path.exists(report_path): os.remove(report_path)
-    else: requests.post(report_url, json={"embeds": [{"title": "Báo Cáo Lỗi", "description": error_info}]})
 
 def f0_extract(audio, f0_method, f0_onnx):
     if not audio or not os.path.exists(audio) or os.path.isdir(audio): 
@@ -1494,24 +1461,6 @@ def pitch_guidance_lock(vocoders):
 def vocoders_lock(pitch, vocoders):
     return {"value": vocoders if pitch else "Default", "interactive": pitch, "__type__": "update"}
 
-def run_audioldm2(input_path, output_path, export_format, sample_rate, audioldm_model, source_prompt, target_prompt, steps, cfg_scale_src, cfg_scale_tar, t_start, save_compute):
-    if not input_path or not os.path.exists(input_path) or os.path.isdir(input_path): 
-        gr_warning(translations["input_not_valid"])
-        return None
-        
-    if not output_path:
-        gr_warning(translations["output_not_valid"])
-        return None
-    
-    output_path = output_path.replace("wav", export_format)
-
-    if os.path.exists(output_path): os.remove(output_path)
-
-    gr_info(translations["start_edit"].format(input_path=input_path))
-    subprocess.run([python, "main/inference/audioldm2.py", "--input_path", input_path, "--output_path", output_path, "--export_format", str(export_format), "--sample_rate", str(sample_rate), "--audioldm_model", audioldm_model, "--source_prompt", source_prompt, "--target_prompt", target_prompt, "--steps", str(steps), "--cfg_scale_src", str(cfg_scale_src), "--cfg_scale_tar", str(cfg_scale_tar), "--t_start", str(t_start), "--save_compute", str(save_compute)])
-    
-    gr_info(translations["success"])
-    return output_path
 
 def change_fp(fp):
     fp16 = fp == "fp16"
