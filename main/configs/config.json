@@ -530,7 +530,6 @@
     "convert_tab": true,
     "convert_with_whisper": true,
     "tts_tab": true,
-    "audioldm2": true,
     "effects_tab": true,
     "create_dataset_tab": true,
     "training_tab": true,
