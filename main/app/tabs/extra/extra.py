@@ -35,6 +35,5 @@ def extra_tab(app):
             gr.Markdown(translations["settings_markdown"])
             settings_tab(app)
 
-        with gr.TabItem(translations["report_bugs"], visible=configs.get("report_bug_tab", True)):
-            gr.Markdown(translations["report_bugs"])
+        
             report_bugs_tab()
