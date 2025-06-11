@@ -52,7 +52,7 @@ def uvr_tabs():
                     allow_custom_value=True,
                     interactive=True
                 )
-                refresh_button = gr.Button(translations["refresh"])
+                refresh_button = gr.Button("refresh")
             output_folder = gr.Textbox(
                 label=translations["output_folder"],
                 value="audios",
