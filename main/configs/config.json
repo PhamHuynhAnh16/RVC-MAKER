@@ -1,10 +1,10 @@
 {
-    "language": "vi-VN",
+    "language": "en-US",
     "support_language": [
         "en-US",
         "vi-VN"
     ],
-    "theme": "NoCrypt/miku",
+    "theme": "Thatguy099/Sonix",
     "themes": [
         "NoCrypt/miku",
         "gstaff/xkcd",
