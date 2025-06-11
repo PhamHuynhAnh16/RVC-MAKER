@@ -30,8 +30,7 @@ os.environ["TORCH_FORCE_WEIGHTS_ONLY_LOAD"] = "0"
 
 with gr.Blocks(title=" Ultimate RVC Maker", theme=theme, css="<style> @import url('{fonts}'); * {{font-family: 'Courgette', cursive !important;}} body, html {{font-family: 'Courgette', cursive !important;}} h1, h2, h3, h4, h5, h6, p, button, input, textarea, label, span, div, select {{font-family: 'Courgette', cursive !important;}} </style>".format(fonts=font or "https://fonts.googleapis.com/css2?family=Courgette&display=swap")) as app:
     gr.HTML("<h1 style='text-align: center;'>Ultimate RVC Maker 🎵</h1>")
-    
-
+    g.Markdown("**Some Note**: Thanks to [@PhamHuynhAnh16](https://github.com/PhamHuynhAnh16) for providing the code!")
     with gr.Tabs():      
         inference_tab()
         editing_tab()
