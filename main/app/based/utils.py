@@ -29,7 +29,7 @@ sys.path.append(os.getcwd())
 
 from main.tools import huggingface
 from main.configs.config import Config
-from main.app.based.patcher gr_info, gr_warning, gr_error, get_gpu_info
+from main.app.based.patcher import gr_info, gr_warning, gr_error, get_gpu_info
 
 ssl._create_default_https_context = ssl._create_unverified_context
 logger = logging.getLogger(__name__)
