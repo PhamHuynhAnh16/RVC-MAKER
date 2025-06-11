@@ -1,5 +1,5 @@
 import gradio as gr
-import logging
+import logging, torch
 
 def gr_info(message):
     gr.Info(message, duration=2)
