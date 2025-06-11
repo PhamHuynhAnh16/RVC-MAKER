@@ -36,7 +36,7 @@ def download_tab():
         ytaudio = gr.Audio(label="Output")
         url_inputyt = gr.Textbox(label="URL")
         
-        downloadyt = gr.Button(translations["downloads"], variant="primary", visible=False)
+        downloadyt = gr.Button(translations["downloads"], variant="primary")
         downloadyt.click(fn=yt_download, inputs=url_inputyt, outputs=ytaudio)
     
     with gr.TabItem(translations["downloads"], visible=configs.get("downloads_tab", True)):
