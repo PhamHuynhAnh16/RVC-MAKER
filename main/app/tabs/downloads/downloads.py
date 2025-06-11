@@ -1,6 +1,6 @@
 import os
 import sys
-
+import yt_dlp
 import gradio as gr
 
 sys.path.append(os.getcwd())
@@ -10,7 +10,35 @@ from main.app.core.downloads import download_model, search_models, download_pret
 from main.app.core.ui import change_download_choices, change_download_pretrained_choices, shutil_move
 from main.app.core.process import fetch_pretrained_data, save_drop_model, update_sample_rate_dropdown
 
+output_dir = os.path.join(os.getcwd(), 'audios')
+
+
+
+def yt_download(link):
+    ydl_opts = {
+        'format': 'bestaudio',
+        'outtmpl': '%(title)s',
+        'nocheckcertificate': True,
+        'ignoreerrors': True,
+        'no_warnings': True,
+        'quiet': True,
+        'extractaudio': True,
+        'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3'}],
+    }
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        result = ydl.extract_info(link, download=True)
+        download_path = ydl.prepare_filename(result, outtmpl='%(title)s.mp3')
+
+    return download_path
+
 def download_tab():
+    with gr.TabItem("yt_dlp"):
+        ytaudio = gr.Audio(label="Output")
+        url_inputyt = gr.Textbox(label="URL")
+        
+        downloadyt = gr.Button(translations["downloads"], variant="primary", visible=False)
+        downloadyt.click(fn=yt_download, inputs=url_inputyt, outputs=ytaudio)
+    
     with gr.TabItem(translations["downloads"], visible=configs.get("downloads_tab", True)):
         gr.Markdown(translations["download_markdown"])
         with gr.Row():
