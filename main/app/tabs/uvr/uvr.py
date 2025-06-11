@@ -1,6 +1,8 @@
 import gradio as gr
-import os
+import os, sys
 import shutil
+
+sys.path.append(os.getcwd())
 from main.tools import Config
 from main.tools.utils import *
 from main.tools.huggingface import download_url, separator_music
