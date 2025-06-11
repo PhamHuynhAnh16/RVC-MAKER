@@ -1,26 +1,7 @@
 import gradio as gr
-import os, sys
-import shutil
-
-sys.path.append(os.getcwd())
-
 from main.tools import huggingface
 from main.configs.config import Config
 from main.app.based.utils import *
-
-def update_visibility(backing, reverb, separator_model, cleaner):
-    is_mdx = separator_model in mdx_model
-    return {
-        "mdx_batch_size": gr.update(visible=backing or reverb or is_mdx),
-        "mdx_hop_length": gr.update(visible=backing or reverb or is_mdx),
-        "denoise": gr.update(visible=is_mdx, interactive=is_mdx),
-        "shifts": gr.update(visible=not is_mdx),
-        "separator_backing_model": gr.update(visible=backing),
-        "main_vocals": gr.update(visible=backing),
-        "backing_vocals": gr.update(visible=backing),
-        "backing_reverb": gr.update(visible=backing and reverb, interactive=backing and reverb),
-        "clean_strength": gr.update(visible=cleaner)
-    }
 
 def uvr_tabs():
     with gr.TabItem(translations["separator_tab"], visible=configs.get("separator_tab", True)):
