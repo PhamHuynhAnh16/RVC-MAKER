@@ -10,7 +10,6 @@ from main.app.tabs.extra.child.fushion import fushion_tab
 from main.app.tabs.extra.child.settings import settings_tab
 from main.app.tabs.extra.child.read_model import read_model_tab
 from main.app.tabs.extra.child.f0_extract import f0_extract_tab
-from main.app.tabs.extra.child.report_bugs import report_bugs_tab
 from main.app.tabs.extra.child.convert_model import convert_model_tab
 
 def extra_tab(app):
