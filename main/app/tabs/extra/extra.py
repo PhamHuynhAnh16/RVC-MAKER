@@ -35,4 +35,4 @@ def extra_tab(app):
             settings_tab(app)
 
         
-            report_bugs_tab()
+            
