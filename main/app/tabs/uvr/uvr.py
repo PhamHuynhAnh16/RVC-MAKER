@@ -6,7 +6,7 @@ sys.path.append(os.getcwd())
 
 from main.tools import huggingface
 from main.configs.config import Config
-from main.app.based.utils import
+from main.app.based.utils import *
 from main.tools.huggingface import download_url, separator_music
 
 def update_visibility(backing, reverb, separator_model, cleaner):
