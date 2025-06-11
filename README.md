@@ -121,6 +121,8 @@ python main\app\parser.py --help
 - **This project only supports NVIDIA GPUs**
 - **Currently, new encoders like MRF HIFIGAN do not yet have complete pre-trained datasets**
 - **MRF HIFIGAN and REFINEGAN encoders do not support training without pitch training**
+- **Models in the URVC repository are collected from AI Hub, HuggingFace, and other repositories. They may carry different licenses (For example, Audioldm2 has model weights with a "Non-Commercial" clause).**
+- **This source code contains third party software components licensed under "non-commercial" terms. Any commercial use, including solicitation of donations or financialization of derivatives, may violate the license and will be subject to appropriate legal liability.**
 
 # Terms of Use
 

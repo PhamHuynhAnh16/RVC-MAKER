@@ -84,7 +84,7 @@ def mark_as_saver(method):
     sig = inspect.signature(method)
 
     try:
-        sig.bind(object(), os.path.join("testpath"))
+        sig.bind(object(), "testpath")
     except TypeError:
         raise TypeError
     
@@ -95,7 +95,7 @@ def mark_as_transfer(method):
     sig = inspect.signature(method)
     
     try:
-        sig.bind(object(), os.path.join("testpath"))
+        sig.bind(object(), "testpath")
     except TypeError:
         raise TypeError
     
@@ -106,7 +106,7 @@ def mark_as_loader(method):
     sig = inspect.signature(method)
 
     try:
-        sig.bind(object(), os.path.join("testpath"), True)
+        sig.bind(object(), "testpath", True)
     except TypeError:
         raise TypeError
     
@@ -319,11 +319,14 @@ class STFT(torch.nn.Module):
     def forward(self, x):
         or_shape = x.shape
         if len(or_shape) == 3: x = x.transpose(1, 2).reshape(or_shape[0] * or_shape[2], or_shape[1])
+        
+        device = x.device
+        if str(device) not in ["cuda", "cpu"]: x = x.cpu()
 
         stft = torch.view_as_real(torch.stft(x, self.n_fft, self.hop_length, self.win_length, self.window.to(x.device), self.center, self.pad_mode, self.normalized_stft, self.onesided, return_complex=True))
         stft = stft.reshape(or_shape[0], or_shape[2], stft.shape[1], stft.shape[2], stft.shape[3]).permute(0, 3, 2, 4, 1) if len(or_shape) == 3 else stft.transpose(2, 1)
 
-        return stft
+        return stft.to(device)
 
     def get_filter_properties(self):
         if not self.center: raise ValueError

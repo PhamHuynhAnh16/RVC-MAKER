@@ -15,14 +15,13 @@ import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
 
-from contextlib import contextmanager
+from dataclasses import dataclass, replace
 from torch.distributions import Categorical
 from functools import cached_property, lru_cache
-from dataclasses import dataclass, replace
-from torch.nn.functional import scaled_dot_product_attention
 
 sys.path.append(os.getcwd())
 
+from main.app.variables import configs
 from main.library.utils import load_audio
 
 LANGUAGES = {"en": "english", "zh": "chinese", "de": "german", "es": "spanish", "ru": "russian", "ko": "korean", "fr": "french", "ja": "japanese", "pt": "portuguese", "tr": "turkish", "pl": "polish", "ca": "catalan", "nl": "dutch", "ar": "arabic", "sv": "swedish", "it": "italian", "id": "indonesian", "hi": "hindi", "fi": "finnish", "vi": "vietnamese", "he": "hebrew", "uk": "ukrainian", "el": "greek", "ms": "malay", "cs": "czech", "ro": "romanian", "da": "danish", "hu": "hungarian", "ta": "tamil", "no": "norwegian", "th": "thai", "ur": "urdu", "hr": "croatian", "bg": "bulgarian", "lt": "lithuanian", "la": "latin", "mi": "maori", "ml": "malayalam", "cy": "welsh", "sk": "slovak", "te": "telugu", "fa": "persian", "lv": "latvian", "bn": "bengali", "sr": "serbian", "az": "azerbaijani", "sl": "slovenian", "kn": "kannada", "et": "estonian", "mk": "macedonian", "br": "breton", "eu": "basque", "is": "icelandic", "hy": "armenian", "ne": "nepali", "mn": "mongolian", "bs": "bosnian", "kk": "kazakh", "sq": "albanian", "sw": "swahili", "gl": "galician", "mr": "marathi", "pa": "punjabi", "si": "sinhala", "km": "khmer", "sn": "shona", "yo": "yoruba", "so": "somali", "af": "afrikaans", "oc": "occitan", "ka": "georgian", "be": "belarusian", "tg": "tajik", "sd": "sindhi", "gu": "gujarati", "am": "amharic", "yi": "yiddish", "lo": "lao", "uz": "uzbek", "fo": "faroese", "ht": "haitian creole", "ps": "pashto", "tk": "turkmen", "nn": "nynorsk", "mt": "maltese", "sa": "sanskrit", "lb": "luxembourgish", "my": "myanmar", "bo": "tibetan", "tl": "tagalog", "mg": "malagasy", "as": "assamese", "tt": "tatar", "haw": "hawaiian", "ln": "lingala", "ha": "hausa", "ba": "bashkir", "jw": "javanese", "su": "sundanese", "yue": "cantonese"}
@@ -30,7 +29,6 @@ TO_LANGUAGE_CODE = {**{language: code for code, language in LANGUAGES.items()}, 
 _ALIGNMENT_HEADS = {"tiny": b"ABzY8bu8Lr0{>%RKn9Fp%m@SkK7Kt=7ytkO", "base": b"ABzY8KQ!870{>%RzyTQH3`Q^yNP!>##QT-<FaQ7m", "small": b"ABzY8DmU6=0{>%Rpa?J`kvJ6qF(V^F86#Xh7JUGMK}P<N0000", "medium": b"ABzY8B0Jh+0{>%R7}kK1fFL7w6%<-Pf*t^=N)Qr&0RR9", "large-v1": b"ABzY8r9j$a0{>%R7#4sLmoOs{s)o3~84-RPdcFk!JR<kSfC2yj", "large-v2": b"ABzY8zd+h!0{>%R7=D0pU<_bnWW*tkYAhobTNnu$jnkEkXqp)j;w1Tzk)UH3X%SZd&fFZ2fC2yj", "large-v3": b"ABzY8gWO1E0{>%R7(9S+Kn!D~%ngiGaR?*L!iJG9p-nab0JQ=-{D1-g00", "large-v3-turbo": b"ABzY8j^C+e0{>%RARaKHP%t(lGR*)0g!tONPyhe`"}
 
 SAMPLE_RATE, N_FFT, HOP_LENGTH, CHUNK_LENGTH = 16000, 400, 160, 30
-
 N_SAMPLES = CHUNK_LENGTH * SAMPLE_RATE 
 N_SAMPLES_PER_TOKEN = HOP_LENGTH * 2  
 
@@ -45,7 +43,7 @@ TOKENS_PER_SECOND = exact_div(SAMPLE_RATE, N_SAMPLES_PER_TOKEN)
 
 
 def load_model(name = "base", device = "cpu"):
-    checkpoint_file = os.path.join("assets", "models", "speaker_diarization", "models", name + ".pt")
+    checkpoint_file = os.path.join(configs["speaker_diarization_path"], "models", name + ".pt")
     alignment_heads = _ALIGNMENT_HEADS[name]
 
     with open(checkpoint_file, "rb") as fp:
@@ -101,15 +99,6 @@ class WordTiming:
         self.start = start
         self.end = end
         self.probability = probability
-
-@contextmanager
-def disable_sdpa():
-    prev_state = MultiHeadAttention.use_sdpa
-    try:
-        MultiHeadAttention.use_sdpa = False
-        yield
-    finally:
-        MultiHeadAttention.use_sdpa = prev_state
 
 def median_filter(x, filter_width):
     pad_width = filter_width // 2
@@ -183,7 +172,7 @@ def find_alignment(model, tokenizer, text_tokens, mel, num_frames, *, medfilt_wi
     QKs = [None] * model.dims.n_text_layer
     hooks = [block.cross_attn.register_forward_hook(lambda _, ins, outs, index=i: QKs.__setitem__(index, outs[-1][0])) for i, block in enumerate(model.decoder.blocks)]
 
-    with torch.no_grad(), disable_sdpa():
+    with torch.no_grad():
         token_probs = model(mel.unsqueeze(0), tokens.unsqueeze(0))[0][len(tokenizer.sot_sequence) :, : tokenizer.eot].softmax(dim=-1)
         text_token_probs = token_probs[np.arange(len(text_tokens)), text_tokens].tolist()
 
@@ -261,7 +250,7 @@ def add_word_timestamps(*, segments, model, tokenizer, mel, num_frames, prepend_
 def mel_filters(device, n_mels):
     assert n_mels in {80, 128}
 
-    with np.load(os.path.join("assets", "models", "speaker_diarization", "assets", "mel_filters.npz"), allow_pickle=False) as f:
+    with np.load(os.path.join(configs["speaker_diarization_path"], "assets", "mel_filters.npz"), allow_pickle=False) as f:
         return torch.from_numpy(f[f"mel_{n_mels}"]).to(device)
 
 def log_mel_spectrogram(audio, n_mels = 80, padding = 0, device = None):
@@ -576,7 +565,7 @@ def get_tokenizer(multilingual, *, num_languages = 99, language = None, task = N
 
 @lru_cache(maxsize=None)
 def get_encoding(name = "gpt2", num_languages = 99):
-    vocab_path = os.path.join("assets", "models", "speaker_diarization", "assets", f"{name}.tiktoken")
+    vocab_path = os.path.join(configs["speaker_diarization_path"], "assets", f"{name}.tiktoken")
     ranks = {base64.b64decode(token): int(rank) for token, rank in (line.split() for line in open(vocab_path) if line)}
 
     n_vocab = len(ranks)
@@ -739,12 +728,10 @@ class Whisper(nn.Module):
     decode = decode_function
 
 class ResidualAttentionBlock(nn.Module):
-    def __init__(self, n_state: int, n_head: int, cross_attention: bool = False):
+    def __init__(self, n_state, n_head, cross_attention = False):
         super().__init__()
-
         self.attn = MultiHeadAttention(n_state, n_head)
         self.attn_ln = LayerNorm(n_state)
-
         self.cross_attn = (MultiHeadAttention(n_state, n_head) if cross_attention else None)
         self.cross_attn_ln = LayerNorm(n_state) if cross_attention else None
 
@@ -774,10 +761,15 @@ class MultiHeadAttention(nn.Module):
         return self.out(wv), qk
 
     def qkv_attention(self, q, k, v, mask = None):
-        _, n_ctx, _ = q.shape
-
+        _, n_ctx, n_state = q.shape
+        scale = (n_state // self.n_head) ** -0.25
         q, k, v = q.view(*q.shape[:2], self.n_head, -1).permute(0, 2, 1, 3), k.view(*k.shape[:2], self.n_head, -1).permute(0, 2, 1, 3), v.view(*v.shape[:2], self.n_head, -1).permute(0, 2, 1, 3)
-        return scaled_dot_product_attention(q, k, v, is_causal=mask is not None and n_ctx > 1).permute(0, 2, 1, 3).flatten(start_dim=2), None
+
+        qk = (q * scale) @ (k * scale).transpose(-1, -2)
+        if mask is not None: qk = qk + mask[:n_ctx, :n_ctx]
+        qk = qk.float()
+
+        return (F.softmax(qk, dim=-1).to(q.dtype) @ v).permute(0, 2, 1, 3).flatten(start_dim=2), qk.detach()
     
 class LogitFilter:
     def apply(self, logits, tokens):

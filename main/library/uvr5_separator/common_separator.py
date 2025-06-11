@@ -11,8 +11,9 @@ from pydub import AudioSegment
 
 sys.path.append(os.getcwd())
 
-from .spec_utils import normalize
+from main.library import torch_amd
 from main.configs.config import Config
+from main.library.uvr5_separator.spec_utils import normalize
 
 translations = Config().translations
 
@@ -54,7 +55,6 @@ class CommonSeparator:
 
     def __init__(self, config):
         self.logger = config.get("logger")
-        self.log_level = config.get("log_level")
         self.torch_device = config.get("torch_device")
         self.torch_device_cpu = config.get("torch_device_cpu")
         self.torch_device_mps = config.get("torch_device_mps")
@@ -156,7 +156,7 @@ class CommonSeparator:
         return mix
 
     def write_audio(self, stem_path, stem_source):
-        duration_seconds = librosa.get_duration(filename=self.audio_file_path)
+        duration_seconds = librosa.get_duration(y=librosa.load(self.audio_file_path, sr=None)[0])
         duration_hours = duration_seconds / 3600
         self.logger.info(translations["duration"].format(duration_hours=f"{duration_hours:.2f}", duration_seconds=f"{duration_seconds:.2f}"))
 
@@ -239,6 +239,10 @@ class CommonSeparator:
         if self.torch_device == torch.device("cuda"):
             self.logger.debug(translations["clean_cache"].format(name="CUDA"))
             torch.cuda.empty_cache()
+
+        if torch_amd.torch_available and self.torch_device == torch.device("ocl"):
+            self.logger.debug(translations["clean_cache"].format(name="AMD"))
+            torch_amd.pytorch_ocl.empty_cache()
 
     def clear_file_specific_paths(self):
         self.logger.info(translations["del_path"])

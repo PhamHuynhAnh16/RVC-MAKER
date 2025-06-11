@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile.cuda128
     container_name: rvc
     ports:
-      - 7865:7865
+      - 7860:7860
     deploy:
       resources:
         reservations:

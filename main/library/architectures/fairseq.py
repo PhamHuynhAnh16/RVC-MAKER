@@ -22,18 +22,15 @@ fairseq_data_dictionary = types.ModuleType("fairseq.data.dictionary")
 fairseq_data_dictionary.Dictionary = Dictionary
 fairseq.data = fairseq_data
 fairseq_data.dictionary = fairseq_data_dictionary
-
 sys.modules["fairseq"] = fairseq
 sys.modules["fairseq.data"] = fairseq_data
 sys.modules["fairseq.data.dictionary"] = fairseq_data_dictionary
 
 def load_model(filename):
     state = torch.load(filename, map_location="cpu")
-
     model = HubertModel(HubertConfig(**state['cfg']['model']))
     model.load_state_dict(state['model'], strict=False)
-
-    return [model], Model_Config(state["cfg"]), Model_Config(state["cfg"]["task"])
+    return model
 
 def softmax(x, dim, onnx_trace = False):
     return F.softmax(x.float(), dim=dim) if onnx_trace else F.softmax(x, dim=dim, dtype=torch.float32)
@@ -53,7 +50,6 @@ def with_incremental_state(cls):
 def quant_noise(module, p, block_size):
     if p <= 0: return module
     assert isinstance(module, (nn.Linear, nn.Embedding, nn.Conv2d))
-
     is_conv = module.weight.ndim == 4
     if not is_conv: assert (module.weight.size(1) % block_size == 0)
     else:
@@ -68,7 +64,6 @@ def quant_noise(module, p, block_size):
                 weight = mod.weight
                 in_features = weight.size(1)
                 out_features = weight.size(0)
-
                 mask = torch.zeros(in_features // block_size * out_features, device=weight.device)
                 mask.bernoulli_(p)
                 mask = mask.repeat_interleave(block_size, -1).view(-1, in_features)
@@ -153,7 +148,6 @@ class FairseqDecoder(nn.Module):
                 assert "target" in sample
                 target = sample["target"]
             else: target = None
-
             out = self.adaptive_softmax.get_log_prob(net_output[0], target=target)
             return out.exp_() if not log_probs else out
 
@@ -223,9 +217,7 @@ class MultiheadAttention(FairseqIncrementalDecoder):
         self.v_proj = quant_noise(nn.Linear(self.vdim, embed_dim, bias=bias), q_noise, qn_block_size)
         self.q_proj = quant_noise(nn.Linear(embed_dim, embed_dim, bias=bias), q_noise, qn_block_size)
         self.out_proj = quant_noise(nn.Linear(embed_dim, embed_dim, bias=bias), q_noise, qn_block_size)
-        if add_bias_kv:
-            self.bias_k = nn.Parameter(torch.Tensor(1, 1, embed_dim))
-            self.bias_v = nn.Parameter(torch.Tensor(1, 1, embed_dim))
+        if add_bias_kv: self.bias_k, self.bias_v = nn.Parameter(torch.Tensor(1, 1, embed_dim)), nn.Parameter(torch.Tensor(1, 1, embed_dim))
         else: self.bias_k = self.bias_v = None
         self.add_zero_attn = add_zero_attn
         self.beam_size = 1
@@ -248,7 +240,6 @@ class MultiheadAttention(FairseqIncrementalDecoder):
             nn.init.xavier_uniform_(self.q_proj.weight)
 
         nn.init.xavier_uniform_(self.out_proj.weight)
-
         if self.out_proj.bias is not None: nn.init.constant_(self.out_proj.bias, 0.0)
         if self.bias_k is not None: nn.init.xavier_normal_(self.bias_k)
         if self.bias_v is not None: nn.init.xavier_normal_(self.bias_v)
@@ -274,7 +265,6 @@ class MultiheadAttention(FairseqIncrementalDecoder):
 
     def _adaptive_prune_heads(self, reserve_head_index):
         new_q_weight, new_q_bias, new_k_weight, new_k_bias, new_v_weight, new_v_bias, new_out_proj_weight = [], [], [], [], [], [], []
-
         for ele in reserve_head_index:
             start_idx, end_idx = ele
             new_q_weight.append(self.q_proj.weight[start_idx:end_idx])
@@ -284,7 +274,6 @@ class MultiheadAttention(FairseqIncrementalDecoder):
             new_v_weight.append(self.v_proj.weight[start_idx:end_idx])
             new_v_bias.append(self.v_proj.bias[start_idx:end_idx])
             new_out_proj_weight.append(self.out_proj.weight[:, start_idx:end_idx])
-
         new_q_weight = torch.cat(new_q_weight).detach()
         new_k_weight = torch.cat(new_k_weight).detach()
         new_v_weight = torch.cat(new_v_weight).detach()
@@ -299,7 +288,6 @@ class MultiheadAttention(FairseqIncrementalDecoder):
         new_k_bias.requires_grad = True
         new_v_bias = torch.cat(new_v_bias).detach()
         new_v_bias.requires_grad = True
-
         self.q_proj.weight = nn.Parameter(new_q_weight)
         self.q_proj.bias = nn.Parameter(new_q_bias)
         self.k_proj.weight = nn.Parameter(new_k_weight)
@@ -342,10 +330,8 @@ class MultiheadAttention(FairseqIncrementalDecoder):
         is_tpu = query.device.type == "xla"
         tgt_len, bsz, embed_dim = query.size()
         src_len = tgt_len
-        
         if not self.skip_embed_dim_check: assert (embed_dim == self.embed_dim)
         assert list(query.size()) == [tgt_len, bsz, embed_dim]
-
         if key is not None:
             src_len, key_bsz, _ = key.size()
             if not torch.jit.is_scripting():
@@ -386,20 +372,17 @@ class MultiheadAttention(FairseqIncrementalDecoder):
             v = self.v_proj(value)
 
         q *= self.scaling
-
         if self.bias_k is not None:
             assert self.bias_v is not None
             k, v, attn_mask, key_padding_mask = self._add_bias(k, v, attn_mask, key_padding_mask, bsz)
 
         q = (q.contiguous().view(tgt_len, bsz * self.num_heads, self.head_dim).transpose(0, 1))
         kv_bsz = bsz 
-
         if k is not None:
             kv_bsz = k.size(1)
             k = (k.contiguous().view(-1, kv_bsz * self.num_heads, self.head_dim).transpose(0, 1))
 
         if v is not None: v = (v.contiguous().view(-1, kv_bsz * self.num_heads, self.head_dim).transpose(0, 1))
-
         if saved_state is not None:
             if "prev_key" in saved_state:
                 _prev_key = saved_state["prev_key"]
@@ -418,7 +401,6 @@ class MultiheadAttention(FairseqIncrementalDecoder):
                 _prev_value = saved_state["prev_value"]
                 assert _prev_value is not None or kv_bsz == _prev_value.size(0)
                 prev_value = _prev_value.view(kv_bsz * self.num_heads, -1, self.head_dim)
-
                 if static_kv: v = prev_value
                 else:
                     assert v is not None
@@ -426,14 +408,11 @@ class MultiheadAttention(FairseqIncrementalDecoder):
 
             prev_key_padding_mask = None
             if "prev_key_padding_mask" in saved_state: prev_key_padding_mask = saved_state["prev_key_padding_mask"]
-
             assert k is not None and v is not None
             key_padding_mask = MultiheadAttention._append_prev_key_padding_mask(key_padding_mask=key_padding_mask, prev_key_padding_mask=prev_key_padding_mask, batch_size=kv_bsz, src_len=k.size(1), static_kv=static_kv)
-
             saved_state["prev_key"] = k.view(kv_bsz, self.num_heads, -1, self.head_dim)
             saved_state["prev_value"] = v.view(kv_bsz, self.num_heads, -1, self.head_dim)
             saved_state["prev_key_padding_mask"] = key_padding_mask
-
             assert incremental_state is not None
             incremental_state = self._set_input_buffer(incremental_state, saved_state)
 
@@ -470,11 +449,9 @@ class MultiheadAttention(FairseqIncrementalDecoder):
             attn_weights = attn_weights.view(bsz * self.num_heads, tgt_len, src_len)
 
         if before_softmax: return attn_weights, v
-
         attn_weights_float = softmax(attn_weights, dim=-1, onnx_trace=self.onnx_trace)
         attn_weights = attn_weights_float.type_as(attn_weights)
         attn_probs = self.dropout_module(attn_weights)
-
         assert v is not None
         attn = None
 
@@ -484,9 +461,7 @@ class MultiheadAttention(FairseqIncrementalDecoder):
         else: attn = torch.bmm(attn_probs, v)
         assert list(attn.size()) == [bsz * self.num_heads, tgt_len, self.head_dim]
 
-        if self.onnx_trace and attn.size(1) == 1: attn = attn.contiguous().view(tgt_len, bsz, self.embed_dim)
-        else: attn = attn.transpose(0, 1).contiguous().view(tgt_len, bsz, self.embed_dim)
-
+        attn = attn.contiguous().view(tgt_len, bsz, self.embed_dim) if self.onnx_trace and attn.size(1) == 1 else attn.transpose(0, 1).contiguous().view(tgt_len, bsz, self.embed_dim)
         attn = self.out_proj(attn)
         attn_weights = None
 
@@ -533,19 +508,17 @@ class MultiheadAttention(FairseqIncrementalDecoder):
 
     def _get_input_buffer(self, incremental_state):
         result = self.get_incremental_state(incremental_state, "attn_state")
-        if result is not None: return result
-        else: return {}
+        return result if result is not None else {}
 
     def _set_input_buffer(self, incremental_state, buffer):
         return self.set_incremental_state(incremental_state, "attn_state", buffer)
 
-    def apply_sparse_mask(self, attn_weights, tgt_len: int, src_len: int, bsz: int):
+    def apply_sparse_mask(self, attn_weights, tgt_len, src_len, bsz):
         return attn_weights
 
     def upgrade_state_dict_named(self, state_dict, name):
         prefix = name + "." if name != "" else ""
-        items_to_add = {}
-        keys_to_remove = []
+        items_to_add, keys_to_remove = {}, []
         for k in state_dict.keys():
             if k.endswith(prefix + "in_proj_weight"):
                 dim = int(state_dict[k].shape[0] / 3)
@@ -585,10 +558,8 @@ def init_bert_params(module):
 def make_conv_pos(e, k, g):
     pos_conv = nn.Conv1d(e, e, kernel_size=k, padding=k // 2, groups=g)
     dropout = 0
-
     nn.init.normal_(pos_conv.weight, mean=0, std=math.sqrt((4 * (1.0 - dropout)) / (k * e)))
     nn.init.constant_(pos_conv.bias, 0)
-
     return nn.Sequential(nn.utils.parametrizations.weight_norm(pos_conv, name="weight", dim=2), SamePad(k), nn.GELU())
 
 def is_xla_tensor(tensor):
@@ -616,7 +587,6 @@ def pad_to_multiple(x, multiple, dim=-1, value=0):
 def compute_mask_indices(shape, padding_mask, mask_prob, mask_length, mask_type = "static", mask_other = 0.0, min_masks = 0, no_overlap = False, min_space = 0, require_same_masks = True, mask_dropout = 0.0, add_masks = False, seed = None, epoch = None, indices = None, idc_select_ver = 1, num_mask_ver = 2):
     bsz, all_sz = shape
     mask = np.full((bsz, all_sz), False)
-
     if num_mask_ver == 1: all_num_mask = max(min_masks, int(mask_prob * all_sz / float(mask_length) + np.random.rand()))
     mask_idcs = []
 
@@ -650,15 +620,12 @@ def compute_mask_indices(shape, padding_mask, mask_prob, mask_length, mask_type 
                 span_start = rng.randint(s, e - length)
                 mask_idc.extend(span_start + i for i in range(length))
                 new_parts = []
-
                 if span_start - s - min_space >= keep_length: new_parts.append((s, span_start - min_space + 1))
                 if e - span_start - length - min_space > keep_length: new_parts.append((span_start + length + min_space, e))
-
                 return new_parts
 
             parts = [(0, sz)]
             min_length = min(lengths)
-
             for length in sorted(lengths, reverse=True):
                 lens = np.fromiter((e - s if e - s >= length + min_space else 0 for s, e in parts), np.int32)
                 l_sum = np.sum(lens)
@@ -703,12 +670,9 @@ def LayerNorm(normalized_shape, eps=1e-5, elementwise_affine=True):
 def prune_state_dict(state_dict, model_cfg):
     arch = None
     if model_cfg is not None: arch = (model_cfg._name if isinstance(model_cfg, DictConfig) else getattr(model_cfg, "arch", None))
-
     if not model_cfg or arch is None or arch == "ptt_transformer": return state_dict
-
     encoder_layers_to_keep = getattr(model_cfg, "encoder_layers_to_keep", None)
     decoder_layers_to_keep = getattr(model_cfg, "decoder_layers_to_keep", None)
-
     if not encoder_layers_to_keep and not decoder_layers_to_keep: return state_dict
 
     def create_pruning_pass(layers_to_keep, layer_name):
@@ -719,9 +683,7 @@ def prune_state_dict(state_dict, model_cfg):
 
         return {"substitution_regex": re.compile(r"^{layer}.*\.layers\.(\d+)".format(layer=layer_name)), "mapping_dict": mapping_dict}
 
-    pruning_passes = []
-    new_state_dict = {}
-
+    pruning_passes, new_state_dict = [], {}
     if encoder_layers_to_keep: pruning_passes.append(create_pruning_pass(encoder_layers_to_keep, "encoder"))
     if decoder_layers_to_keep: pruning_passes.append(create_pruning_pass(decoder_layers_to_keep, "decoder"))
 
@@ -794,7 +756,6 @@ class TransformerSentenceEncoderLayer(nn.Module):
 
     def forward(self, x, self_attn_mask=None, self_attn_padding_mask=None, need_weights=False, att_args=None):
         residual = x
-
         if self.layer_norm_first:
             x = self.self_attn_layer_norm(x)
             x, attn = self.self_attn(query=x, key=x, value=x, key_padding_mask=self_attn_padding_mask, attn_mask=self_attn_mask, need_weights=False)
@@ -830,7 +791,6 @@ class AdapterFast(nn.Module):
         elif act_fn == "gelu": self.act_fn = nn.GELU()
         elif act_fn == "selu": self.act_fn = nn.SELU()
         else: raise ValueError
-
         self.input_dim = input_dim
         self.reset_parameters()
 
@@ -930,7 +890,6 @@ class ESPNETMultiHeadedAttention(nn.Module):
 
     def forward_attention(self, value, scores, mask):
         n_batch = value.size(0)
-
         if mask is not None:
             scores = scores.masked_fill(mask.unsqueeze(1).unsqueeze(2).to(bool), float("-inf"))
             self.attn = torch.softmax(scores, dim=-1)
@@ -977,14 +936,11 @@ class RotaryPositionMultiHeadedAttention(ESPNETMultiHeadedAttention):
         query = query.view(T, B, self.h, self.d_k)
         key = key.view(T, B, self.h, self.d_k)
         value = value.view(T, B, self.h, self.d_k)
-
         cos, sin = self.rotary_emb(value, seq_len=T)
         query, key = apply_rotary_pos_emb(query, key, cos, sin, offset=0)
-
         query = query.view(T, B, self.h * self.d_k)
         key = key.view(T, B, self.h * self.d_k)
         value = value.view(T, B, self.h * self.d_k)
-
         q, k, v = self.forward_qkv(query.transpose(0, 1), key.transpose(0, 1), value.transpose(0, 1))
         return self.forward_attention(v, torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(self.d_k), key_padding_mask).transpose(0, 1), None
 
@@ -995,14 +951,12 @@ class ConformerEncoderLayer(nn.Module):
         self.ffn1 = FeedForwardModule(embed_dim, ffn_embed_dim, dropout, dropout)
         self.self_attn_layer_norm = LayerNorm(embed_dim, export=False)
         self.self_attn_dropout = nn.Dropout(dropout)
-
         if attn_type == "espnet":
             if self.pos_enc_type == "rel_pos": self.self_attn = RelPositionMultiHeadedAttention(embed_dim, attention_heads, dropout=dropout)
             elif self.pos_enc_type == "rope": self.self_attn = RotaryPositionMultiHeadedAttention(embed_dim, attention_heads, dropout=dropout, precision=use_fp16)
             elif self.pos_enc_type == "abs": self.self_attn = ESPNETMultiHeadedAttention(embed_dim, attention_heads, dropout=dropout)
             else: raise Exception
         else: self.self_attn = MultiheadAttention(embed_dim, attention_heads, dropout=dropout)
-
         self.conv_module = ConvolutionModule(embed_dim=embed_dim, channels=embed_dim, depthwise_kernel_size=depthwise_conv_kernel_size, dropout=dropout, activation_fn=activation_fn)
         self.ffn2 = FeedForwardModule(embed_dim, ffn_embed_dim, dropout, dropout, activation_fn=activation_fn)
         self.final_layer_norm = LayerNorm(embed_dim, export=False)
@@ -1012,10 +966,8 @@ class ConformerEncoderLayer(nn.Module):
         x = self.ffn1(x) * 0.5 + residual
         residual = x
         x = self.self_attn_layer_norm(x)
-
         if self.pos_enc_type == "rel_pos": x, attn = self.self_attn(query=x, key=x, value=x, key_padding_mask=encoder_padding_mask, pos_emb=position_emb, need_weights=False)
         else: x, attn = self.self_attn(query=x, key=x, value=x, key_padding_mask=encoder_padding_mask, need_weights=False)
-
         x = self.self_attn_dropout(x)
         x = x + residual
         residual = x
@@ -1024,7 +976,6 @@ class ConformerEncoderLayer(nn.Module):
         x = self.ffn2(x)
         layer_result = x
         x = self.final_layer_norm(x * 0.5 + residual)
-
         return x, (attn, layer_result)
 
 class ConformerWav2Vec2EncoderLayer(ConformerEncoderLayer):
@@ -1039,11 +990,9 @@ class TransformerSentenceEncoderWithAdapterLayer(TransformerSentenceEncoderLayer
         self.adapter_layer = AdapterFast(adapter_num, self.embedding_dim, self.adapter_dim, adapter_act_fn)
 
     def forward(self, x, self_attn_mask=None, self_attn_padding_mask=None, need_weights=False, att_args=None, corpus_key=None):
-
         x, (attn, layer_result) = super().forward(x=x, self_attn_mask=self_attn_mask, self_attn_padding_mask=self_attn_padding_mask, need_weights=need_weights, att_args=att_args)
         assert corpus_key is not None
         assert len(set(corpus_key)) == 1
-
         return x + self.adapter_layer(x, corpus_key[0]), (attn, layer_result)
 
 class TransposeLast(nn.Module):
@@ -1076,7 +1025,6 @@ class TransformerEncoder(nn.Module):
         self.embedding_dim = args.encoder_embed_dim
         self.required_seq_len_multiple = args.required_seq_len_multiple
         pos_conv_depth = getattr(args, "pos_conv_depth", 1)
-
         if pos_conv_depth > 1:
             num_layers = args.pos_conv_depth
             k = max(3, args.conv_pos // num_layers)
@@ -1095,22 +1043,18 @@ class TransformerEncoder(nn.Module):
 
     def forward(self, x, padding_mask=None, layer=None, corpus_key=None):
         x, layer_results = self.extract_features(x, padding_mask, layer, corpus_key=corpus_key)
-
         if self.layer_norm_first and layer is None: x = self.layer_norm(x)
         return x, layer_results
 
     def extract_features(self, x, padding_mask=None, tgt_layer=None, min_layer=0, corpus_key=None):
         if padding_mask is not None: x = index_put(x, padding_mask, 0)
         x = x + self.pos_conv(x.transpose(1, 2)).transpose(1, 2)
-
         if not self.layer_norm_first: x = self.layer_norm(x)
         x, pad_length = pad_to_multiple(x, self.required_seq_len_multiple, dim=-2, value=0)
-
         if pad_length > 0 and padding_mask is None:
             padding_mask = x.new_zeros((x.size(0), x.size(1)), dtype=torch.bool)
             padding_mask[:, -pad_length:] = True
         else: padding_mask, _ = pad_to_multiple(padding_mask, self.required_seq_len_multiple, dim=-1, value=True)
-
         x = F.dropout(x, p=self.dropout, training=self.training).transpose(0, 1)
         layer_results = []
         r = None
@@ -1119,10 +1063,8 @@ class TransformerEncoder(nn.Module):
             dropout_probability = np.random.random() if self.layerdrop > 0 else 1
             if not self.training or (dropout_probability > self.layerdrop):
                 layer_check = layer
-
                 if (corpus_key is None) or (not isinstance(layer_check, (TransformerSentenceEncoderWithAdapterLayer))): x, (z, lr) = layer(x, self_attn_padding_mask=padding_mask, need_weights=False)
                 else: x, (z, lr) = layer(x, self_attn_padding_mask=padding_mask, need_weights=False, corpus_key=corpus_key)
-
                 if i >= min_layer: layer_results.append((x, z, lr))
             if i == tgt_layer:
                 r = x
@@ -1229,7 +1171,6 @@ class BaseFairseqModel(nn.Module):
 
         def do_upgrade(m, prefix):
             if len(prefix) > 0: prefix += "."
-
             for n, c in m.named_children():
                 name = prefix + n
                 if hasattr(c, "upgrade_state_dict_named"): c.upgrade_state_dict_named(state_dict, name)
@@ -1249,7 +1190,6 @@ class BaseFairseqModel(nn.Module):
                 return
 
         self.apply(apply_remove_weight_norm)
-
         def apply_make_generation_fast_(module, prefix):
             if len(prefix) > 0: prefix += "."
 
@@ -1315,14 +1255,6 @@ class HubertConfig:
         self.pos_enc_type = pos_enc_type
         self.fp16 = fp16
 
-class Model_Config(dict):
-    def __getattr__(*args):
-        val = dict.get(*args)
-        return Model_Config(val) if type(val) is dict else val
-
-    __setattr__ = dict.__setitem__
-    __delattr__ = dict.__delitem__  
-
 class HubertModel(BaseFairseqModel):
     def __init__(self, cfg):
         super().__init__()
@@ -1380,7 +1312,6 @@ class HubertModel(BaseFairseqModel):
         neg_is_pos = (pos == negs).all(-1)
         logits = torch.cosine_similarity(x.float(), torch.cat([pos.unsqueeze(0), negs], dim=0).float(), dim=-1).type_as(x)
         logits /= self.logit_temp
-
         if neg_is_pos.any(): logits[1:][neg_is_pos] = float("-inf")
         return logits.transpose(0, 1)
 
@@ -1396,7 +1327,6 @@ class HubertModel(BaseFairseqModel):
     def forward_targets(self, features, target_list):
         feat_tsz = features.size(2)
         targ_tsz = min([t.size(1) for t in target_list])
-
         if self.feat2tar_ratio * feat_tsz > targ_tsz:
             feat_tsz = int(targ_tsz / self.feat2tar_ratio)
             features = features[..., :feat_tsz]
@@ -1406,34 +1336,26 @@ class HubertModel(BaseFairseqModel):
     def forward_padding_mask(self, features, padding_mask):
         extra = padding_mask.size(1) % features.size(1)
         if extra > 0: padding_mask = padding_mask[:, :-extra]
-
         return padding_mask.view(padding_mask.size(0), features.size(1), -1).all(-1)
 
     def forward(self, source, target_list = None, padding_mask = None, mask = True, features_only = False, output_layer = None):
         features = self.forward_features(source)
         if target_list is not None: features, target_list = self.forward_targets(features, target_list)
-
         features_pen = features.float().pow(2).mean()
-
         features = self.layer_norm(features.transpose(1, 2))
         unmasked_features = features.clone()
-
         if padding_mask is not None: padding_mask = self.forward_padding_mask(features, padding_mask)
         if self.post_extract_proj is not None: features = self.post_extract_proj(features)
-
         features = self.dropout_input(features)
         unmasked_features = self.dropout_features(unmasked_features)
-
         if mask: x, mask_indices = self.apply_mask(features, padding_mask, target_list)
         else: x, mask_indices = features, None
-
         x, _ = self.encoder(x, padding_mask=padding_mask, layer=None if output_layer is None else output_layer - 1)
         if features_only: return {"x": x, "padding_mask": padding_mask, "features": features}
 
         def compute_pred(proj_x, target, label_embs):
             y = torch.index_select(label_embs, 0, target.long())
             negs = label_embs.unsqueeze(1).expand(-1, proj_x.size(0), -1)
-
             if self.target_glu:
                 y = self.target_glu(y)
                 negs = self.target_glu(negs)
@@ -1441,7 +1363,6 @@ class HubertModel(BaseFairseqModel):
             return self.compute_nce(proj_x, y, negs)
 
         label_embs_list = self.label_embs_concat.split(self.num_classes, 0)
-
         if not self.skip_masked:
             masked_indices = torch.logical_and(~padding_mask, mask_indices)
             proj_x_m = self.final_proj(x[masked_indices])
@@ -1468,7 +1389,6 @@ class HubertModel(BaseFairseqModel):
 
     def get_extra_losses(self, net_output):
         extra_losses, names = [], []
-
         if "features_pen" in net_output:
             extra_losses.append(net_output["features_pen"])
             names.append("features_pen")
