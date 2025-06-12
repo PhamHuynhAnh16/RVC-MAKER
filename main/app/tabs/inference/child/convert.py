@@ -57,7 +57,7 @@ def convert_tab():
                 allow_custom_value=True,
                 interactive=True
             )
-            refresh_audio = gr.Button(translations["refresh"])
+            refresh_audio = gr.Button(translations["refesh"])
 
     # Conversion Settings Section
     with gr.Row():
