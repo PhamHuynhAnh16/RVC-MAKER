@@ -11,7 +11,7 @@ from main.app.core.ui import change_download_choices, change_download_pretrained
 from main.app.core.process import fetch_pretrained_data, save_drop_model, update_sample_rate_dropdown
 
 output_dir = os.path.join(os.getcwd(), 'audios')
-
+cookies_dir = os.path.join(os.getcwd(), 'assets', 'youtube', 'config.txt')
 
 
 def yt_download(link):
@@ -21,7 +21,7 @@ def yt_download(link):
         'nocheckcertificate': True,
         'ignoreerrors': True,
         'no_warnings': True,
-        'quiet': True,
+        'cookies': cookies_dir,
         'extractaudio': True,
         'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3'}],
     }
