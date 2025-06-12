@@ -239,7 +239,7 @@ def convert_tab():
             allow_custom_value=True,
             interactive=True
         )
-        refresh_f0_file = gr.Button(translations["refresh"])
+        refresh_f0_file = gr.Button(translations["refesh"])
 
     # Hubert Model Settings
     with gr.Accordion(translations["hubert_model"], open=False):
@@ -277,7 +277,7 @@ def convert_tab():
         )
         with gr.Row():
             load_presets_btn = gr.Button(translations["load_file"], variant="primary")
-            refresh_presets = gr.Button(translations["refresh"])
+            refresh_presets = gr.Button(translations["refesh"])
         with gr.Accordion(translations["export_file"], open=False):
             with gr.Group():
                 cleaner_chbox = gr.Checkbox(label=translations["save_clean"], value=True, interactive=True)
