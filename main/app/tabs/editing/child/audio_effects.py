@@ -104,14 +104,14 @@ def audio_effects_tab():
                             treble_frequency = gr.Slider(minimum=1000, maximum=10000, step=500, value=3000, label=translations["treble_frequency"], info=translations["treble_frequency_info"], interactive=True)
                     with gr.Accordion(translations["limiter"], open=True, visible=limiter.value) as limiter_accordion:
                         with gr.Row():
-                            limiter_threashold_db = gr.Slider(minimum=-60, maximum=0, step=1, value=-1, label=translations["limiter_threshold_db"], info=translations["limiter_threshold_db_info"], interactive=True)
+                            limiter_threshold_db = gr.Slider(minimum=-60, maximum=0, step=1, value=-1, label=translations["limiter_threshold_db"], info=translations["limiter_threshold_db_info"], interactive=True)
                             limiter_release_ms = gr.Slider(minimum=10, maximum=1000, step=1, value=100, label=translations["limiter_release_ms"], info=translations["limiter_release_ms_info"], interactive=True)
                     with gr.Column():
                         pitch_shift_semitones = gr.Slider(minimum=-20, maximum=20, step=1, value=0, label=translations["pitch"], info=translations["pitch_info"], interactive=True)
                         audio_effect_resample_sr = gr.Radio(choices=[0]+sample_rate_choice, value=0, label=translations["resample"], info=translations["resample_info"], interactive=True, visible=resample_checkbox.value)
                         distortion_drive_db = gr.Slider(minimum=0, maximum=50, step=1, value=20, label=translations["distortion"], info=translations["distortion_info"], interactive=True, visible=distortion_checkbox.value)
                         gain_db = gr.Slider(minimum=-60, maximum=60, step=1, value=0, label=translations["gain"], info=translations["gain_info"], interactive=True, visible=gain_checkbox.value)
-                        clipping_threashold_db = gr.Slider(minimum=-60, maximum=0, step=1, value=-1, label=translations["clipping_threshold_db"], info=translations["clipping_threshold_db_info"], interactive=True, visible=clipping_checkbox.value)
+                        clipping_threshold_db = gr.Slider(minimum=-60, maximum=0, step=1, value=-1, label=translations["clipping_threshold_db"], info=translations["clipping_threshold_db_info"], interactive=True, visible=clipping_checkbox.value)
                         bitcrush_bit_depth = gr.Slider(minimum=1, maximum=24, step=1, value=16, label=translations["bitcrush_bit_depth"], info=translations["bitcrush_bit_depth_info"], interactive=True, visible=bitcrush_checkbox.value)
             with gr.Row():
                 with gr.Accordion(translations["phaser"], open=False, visible=phaser_check_box.value) as phaser_accordion:
@@ -122,7 +122,7 @@ def audio_effects_tab():
                     phaser_feedback = gr.Slider(minimum=-1, maximum=1, step=0.01, value=0, label=translations["phaser_feedback"], info=translations["phaser_feedback_info"], interactive=True)
             with gr.Row():
                 with gr.Accordion(translations["compressor"], open=False, visible=compressor_check_box.value) as compressor_accordion:
-                    compressor_threashold_db = gr.Slider(minimum=-60, maximum=0, step=1, value=-20, label=translations["compressor_threashold_db"], info=translations["compressor_threashold_db_info"], interactive=True)
+                    compressor_threshold_db = gr.Slider(minimum=-60, maximum=0, step=1, value=-20, label=translations["compressor_threshold_db"], info=translations["compressor_threshold_db_info"], interactive=True)
                     compressor_ratio = gr.Slider(minimum=1, maximum=20, step=0.1, value=1, label=translations["compressor_ratio"], info=translations["compressor_ratio_info"], interactive=True)
                     compressor_attack_ms = gr.Slider(minimum=0.1, maximum=100, step=0.1, value=10, label=translations["compressor_attack_ms"], info=translations["compressor_attack_ms_info"], interactive=True)
                     compressor_release_ms = gr.Slider(minimum=10, maximum=1000, step=1, value=100, label=translations["compressor_release_ms"], info=translations["compressor_release_ms_info"], interactive=True)   
@@ -147,7 +147,7 @@ def audio_effects_tab():
     with gr.Row():
         distortion_checkbox.change(fn=visible, inputs=[distortion_checkbox], outputs=[distortion_drive_db])
         gain_checkbox.change(fn=visible, inputs=[gain_checkbox], outputs=[gain_db])
-        clipping_checkbox.change(fn=visible, inputs=[clipping_checkbox], outputs=[clipping_threashold_db])
+        clipping_checkbox.change(fn=visible, inputs=[clipping_checkbox], outputs=[clipping_threshold_db])
         bitcrush_checkbox.change(fn=visible, inputs=[bitcrush_checkbox], outputs=[bitcrush_bit_depth])
     with gr.Row():
         upload_audio.upload(fn=lambda audio_in: shutil_move(audio_in.name, configs["audios_path"]), inputs=[upload_audio], outputs=[audio_in_path])
@@ -183,15 +183,15 @@ def audio_effects_tab():
                 delay_second, 
                 delay_feedback, 
                 delay_mix, 
-                compressor_threashold_db, 
+                compressor_threshold_db, 
                 compressor_ratio, 
                 compressor_attack_ms, 
                 compressor_release_ms, 
-                limiter_threashold_db, 
+                limiter_threshold_db, 
                 limiter_release_ms, 
                 gain_db, 
                 bitcrush_bit_depth, 
-                clipping_threashold_db, 
+                clipping_threshold_db, 
                 phaser_rate_hz, 
                 phaser_depth, 
                 phaser_centre_frequency_hz, 
@@ -235,15 +235,15 @@ def audio_effects_tab():
                 delay_second, 
                 delay_feedback, 
                 delay_mix, 
-                compressor_threashold_db, 
+                compressor_threshold_db, 
                 compressor_ratio, 
                 compressor_attack_ms, 
                 compressor_release_ms, 
-                limiter_threashold_db, 
+                limiter_threshold_db, 
                 limiter_release_ms, 
                 gain_db, 
                 bitcrush_bit_depth, 
-                clipping_threashold_db, 
+                clipping_threshold_db, 
                 phaser_rate_hz, 
                 phaser_depth, 
                 phaser_centre_frequency_hz, 
@@ -291,15 +291,15 @@ def audio_effects_tab():
                 delay_second, 
                 delay_feedback, 
                 delay_mix, 
-                compressor_threashold_db, 
+                compressor_threshold_db, 
                 compressor_ratio, 
                 compressor_attack_ms, 
                 compressor_release_ms, 
-                limiter_threashold_db, 
+                limiter_threshold_db, 
                 limiter_release_ms, 
                 gain_db, 
                 bitcrush_bit_depth, 
-                clipping_threashold_db, 
+                clipping_threshold_db, 
                 phaser_rate_hz, 
                 phaser_depth, 
                 phaser_centre_frequency_hz, 
@@ -350,15 +350,15 @@ def audio_effects_tab():
                 delay_second, 
                 delay_feedback, 
                 delay_mix, 
-                compressor_threashold_db, 
+                compressor_threshold_db, 
                 compressor_ratio, 
                 compressor_attack_ms, 
                 compressor_release_ms, 
-                limiter_threashold_db, 
+                limiter_threshold_db, 
                 limiter_release_ms, 
                 gain_db, 
                 bitcrush_bit_depth, 
-                clipping_threashold_db, 
+                clipping_threshold_db, 
                 phaser_rate_hz, 
                 phaser_depth, 
                 phaser_centre_frequency_hz, 
