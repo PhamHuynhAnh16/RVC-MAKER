@@ -35,7 +35,7 @@ def convert_tab():
                 allow_custom_value=True
             )
         with gr.Row():
-            refresh_models = gr.Button(translations["refresh"])
+            refresh_models = gr.Button(translations["refesh"])
 
     # Audio Input Section
     with gr.Row():
