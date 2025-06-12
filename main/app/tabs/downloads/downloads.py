@@ -10,26 +10,36 @@ from main.app.core.downloads import download_model, search_models, download_pret
 from main.app.core.ui import change_download_choices, change_download_pretrained_choices, shutil_move
 from main.app.core.process import fetch_pretrained_data, save_drop_model, update_sample_rate_dropdown
 
-output_dir = os.path.join(os.getcwd(), 'audios')
-cookies_dir = os.path.join(os.getcwd(), 'assets', 'youtube', 'config.txt')
-
+# Define paths using os.path.join for better cross-platform compatibility
+output_dir = os.path.join(os.getcwd(), "audios")
+cookies_dir = os.path.join(os.getcwd(), "assets", "youtube", "config.txt")
 
 def yt_download(link):
-    ydl_opts = {
-        'format': 'bestaudio',
-        'outtmpl': '%(title)s',
-        'nocheckcertificate': True,
-        'ignoreerrors': True,
-        'no_warnings': True,
-        'cookies': cookies_dir,
-        'extractaudio': True,
-        'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'mp3'}],
-    }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        result = ydl.extract_info(link, download=True)
-        download_path = ydl.prepare_filename(result, outtmpl=f'{output_dir}/%(title)s.mp3')
 
-    return download_path
+    ydl_opts = {
+        "format": "bestaudio",
+        "outtmpl": os.path.join(output_dir, "%(title)s.%(ext)s"),
+        "nocheckcertificate": True,
+        "ignoreerrors": True,
+        "no_warnings": True,
+        "cookies": cookies_dir,
+        "postprocessors": [{
+            "key": "FFmpegExtractAudio",
+            "preferredcodec": "mp3",
+            "preferredquality": "192",  # Set consistent audio quality
+        }],
+    }
+
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            result = ydl.extract_info(link, download=True)
+            if result is None:
+                print(f"Failed to download: {link}")
+                return None
+            return ydl.prepare_filename(result)
+    except Exception as e:
+        print(f"Error downloading {link}: {str(e)}")
+        return None
 
 def download_tab():
     with gr.TabItem("yt_dlp"):
