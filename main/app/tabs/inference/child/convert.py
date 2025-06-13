@@ -127,6 +127,16 @@ def convert_tab():
                     value=0,
                     interactive=True
                 )
+                proposal_pitch_threshold = gr.Slider(
+                    minimum=50.0,
+                    maximum=1200.0,
+                    label=translations["proposal_pitch_threshold"], 
+                    info=translations["proposal_pitch_threshold_info"], 
+                    value=255.0, 
+                    step=0.1, 
+                    interactive=True, 
+                    visible=proposal_pitch.value
+                )
                 filter_radius = gr.Slider(
                     minimum=0,
                     maximum=7,
@@ -442,7 +452,7 @@ def convert_tab():
             hop_length, embedders, custom_embedders, resample_sr, filter_radius,
             volume_envelope, protect, split_audio, f0_autotune_strength, audio_select,
             checkpointing, onnx_f0_mode, formant_shifting, formant_qfrency, formant_timbre,
-            f0_file_dropdown, embed_mode, proposal_pitch
+            f0_file_dropdown, embed_mode, proposal_pitch, proposal_pitch_threshold
         ],
         outputs=[main_convert, backing_convert, main_backing, original_convert, vocal_instrument, convert_button],
         api_name="convert_audio"
