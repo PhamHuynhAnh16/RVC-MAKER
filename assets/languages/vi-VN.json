@@ -824,5 +824,7 @@
     "proposal_pitch": "Tự động đề xuất cao độ",
     "hybrid_calc": "Tính toán Hybrid cho phương thức: {f0_method}...",
     "proposal_f0": "Đã đề xuất cao độ: {up_key}",
-    "startautotune": "Bắt đầu tự động điều chỉnh cao độ..."
+    "startautotune": "Bắt đầu tự động điều chỉnh cao độ...",
+    "proposal_pitch_threshold": "Tần số ước tính cao độ",
+    "proposal_pitch_threshold_info": "Tần số ước tính cao độ, đối với mô hình nam sử dụng ở mức 155.0 và mô hình nữ với mức 255.0"
 }

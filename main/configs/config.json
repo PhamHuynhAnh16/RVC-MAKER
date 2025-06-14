@@ -578,7 +578,6 @@
     "audios_path": "audios",
     "demucs_segments_enable": true,
     "demucs_cpu_mode": false,
-    "target_f0": 155.0,
     "limit_f0": 8,
     "debug_mode": false
 }
