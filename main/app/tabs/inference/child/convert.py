@@ -424,6 +424,7 @@ def convert_tab():
         outputs=[presets_name]
     )
     upload_presets.upload(fn=lambda audio_in: shutil_move(audio_in.name, configs["presets_path"]), inputs=[upload_presets], outputs=[presets_name])
+    proposal_pitch.change(fn=visible, inputs=[proposal_pitch], outputs=[proposal_pitch_threshold])
 
     audio_select.change(fn=lambda: visible(True), inputs=[], outputs=[convert_button_2])
     convert_button.click(fn=lambda: visible(False), inputs=[], outputs=[convert_button])
@@ -438,7 +439,7 @@ def convert_tab():
             hop_length, embedders, custom_embedders, resample_sr, filter_radius,
             volume_envelope, protect, split_audio, f0_autotune_strength, checkpointing,
             onnx_f0_mode, formant_shifting, formant_qfrency, formant_timbre, f0_file_dropdown,
-            embed_mode, proposal_pitch
+            embed_mode, proposal_pitch, proposal_pitch_threshold
         ],
         outputs=[audio_select, main_convert, backing_convert, main_backing, original_convert, vocal_instrument, convert_button],
         api_name="convert_selection"

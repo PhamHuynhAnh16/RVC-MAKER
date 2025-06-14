@@ -43,7 +43,7 @@ class Generator:
         self.autotune = Autotune(self.ref_freqs)
         self.note_dict = self.autotune.note_dict
 
-    def calculator(self, x_pad, f0_method, x, f0_up_key = 0, p_len = None, filter_radius = 3, f0_autotune = False, f0_autotune_strength = 1, manual_f0 = None, proposal_pitch = False):
+    def calculator(self, x_pad, f0_method, x, f0_up_key = 0, p_len = None, filter_radius = 3, f0_autotune = False, f0_autotune_strength = 1, manual_f0 = None, proposal_pitch = False, proposal_pitch_threshold = 255.0):
         if p_len is None: p_len = x.shape[0] // self.window
         if "hybrid" in f0_method: logger.debug(translations["hybrid_calc"].format(f0_method=f0_method))
 
@@ -53,7 +53,7 @@ class Generator:
         if isinstance(f0, tuple): f0 = f0[0]
         
         if proposal_pitch: 
-            up_key = proposal_f0_up_key(f0, configs["target_f0"], configs["limit_f0"])
+            up_key = proposal_f0_up_key(f0, proposal_pitch_threshold, configs["limit_f0"])
             logger.debug(translations["proposal_f0"].format(up_key=up_key))
             f0_up_key += up_key
 
