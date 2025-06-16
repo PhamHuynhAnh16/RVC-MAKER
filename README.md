@@ -38,7 +38,7 @@ This project is all in one, easy-to-use voice conversion tool. With the goal of 
 
 | Feature | Description |
 |---------|-------------|
-| **Music Separation** | Utilizes MDX-Net and Demucs for separating audio tracks. |
+| **Music Separation** | Utilizes MDX-Net for separating audio tracks. |
 | **Voice Conversion** | Supports file conversion, batch conversion, conversion with Whisper, and text-to-speech conversion. |
 | **Background Music Editing** | Enables editing and manipulation of background music tracks. |
 | **Apply Effects to Audio** | Allows application of various effects to enhance or modify audio output. |
