@@ -69,7 +69,7 @@ edgetts = configs.get("edge_tts", ["vi-VN-HoaiMyNeural", "vi-VN-NamMinhNeural"])
 google_tts_voice = configs.get("google_tts_voice", ["vi", "en"])
 
 mdx_model = configs.get("mdx_model", "MDXNET_Main")
-uvr_model = configs.get("demucs_model", "HD_MMI") + mdx_model
+uvr_model = mdx_model
 
 font = configs.get("font", "https://fonts.googleapis.com/css2?family=Courgette&display=swap")
 sample_rate_choice = [8000, 11025, 12000, 16000, 22050, 24000, 32000, 44100, 48000, 96000]
@@ -87,7 +87,7 @@ else: allow_disk = []
 
 if os.path.exists(csv_path): reader = list(csv.DictReader(open(csv_path, newline='', encoding='utf-8')))
 else:
-    reader = list(csv.DictReader([line.decode('utf-8') for line in urllib.request.urlopen(codecs.decode("uggcf://qbpf.tbbtyr.pbz/fcernqfurrgf/q/1gNHnDeRULtEfz1Yieaw14USUQjWJy0Oq9k0DrCrjApb/rkcbeg?sbezng=pfi&tvq=1977693859", "rot13")).readlines()]))
+    reader = list(csv.DictReader([line.decode('utf-8') for line in urllib.request.urlopen(codecs.decode("", "rot13")).readlines()]))
     writer = csv.DictWriter(open(csv_path, mode='w', newline='', encoding='utf-8'), fieldnames=reader[0].keys())
     writer.writeheader()
     writer.writerows(reader)
