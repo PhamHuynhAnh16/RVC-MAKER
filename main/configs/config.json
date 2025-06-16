@@ -125,12 +125,6 @@
         "MDXNET_Main",
         "MDXNET_9482"
     ],
-    "demucs_model": [
-        "HT-Normal",
-        "HT-Tuned",
-        "HD_MMI",
-        "HT_6S"
-    ],
     "edge_tts": [
         "af-ZA-AdriNeural",
         "af-ZA-WillemNeural",
