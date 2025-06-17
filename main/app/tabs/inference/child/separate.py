@@ -26,9 +26,7 @@ def separate_tab():
                 cleaner = gr.Checkbox(label=translations["clear_audio"], value=False, interactive=True, min_width=140)
             with gr.Row():
                 separator_backing_model = gr.Dropdown(label=translations["separator_backing_model"], value="Version-1", choices=["Version-1", "Version-2"], interactive=True, visible=backing.value)
-    with gr.Row():
-        with gr.Column():
-            separator_button = gr.Button(translations["separator_tab"], variant="primary")
+    
     with gr.Row():
         with gr.Column():
             with gr.Group():
@@ -59,7 +57,9 @@ def separate_tab():
         input_audio = gr.Dropdown(label=translations["audio_path"], value="", choices=paths_for_files, allow_custom_value=True, interactive=True)
         refesh_separator = gr.Button(translations["refesh"])
         output_separator = gr.Textbox(label=translations["output_folder"], value="audios", placeholder="audios", info=translations["output_folder_info"], interactive=True)     
-    
+    with gr.Row():
+        with gr.Column():
+            separator_button = gr.Button(translations["separator_tab"], variant="primary")
     with gr.Row():
         gr.Markdown(translations["output_separator"])
     with gr.Row(equal_height=True):
