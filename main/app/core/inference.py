@@ -19,10 +19,10 @@ def convert(pitch, filter_radius, index_rate, volume_envelope, protect, hop_leng
         from main.inference.conversion.convert import run_convert_script
 
         print("Ultimate RVC Maker:")
-        print("Pitch:" + pitch)
-        print("filter radius:" + filter_radius)
-        print("f0 method:" + f0_method)
-        print("f0 method:" + embedder_model)
+        print("Pitch:"  pitch)
+        print("filter radius:" filter_radius)
+        print("f0 method:"  f0_method)
+        print("f0 method:"  embedder_model)
         run_convert_script(pitch, filter_radius, index_rate, volume_envelope, protect, hop_length, f0_method, input_path, output_path, pth_path, index_path, f0_autotune, f0_autotune_strength, clean_audio, clean_strength, export_format, embedder_model, resample_sr, split_audio, checkpointing, f0_file, f0_onnx, embedders_mode, formant_shifting, formant_qfrency, formant_timbre, proposal_pitch, proposal_pitch_threshold)
 
 def convert_audio(clean, autotune, use_audio, use_original, convert_backing, not_merge_backing, merge_instrument, pitch, clean_strength, model, index, index_rate, input, output, format, method, hybrid_method, hop_length, embedders, custom_embedders, resample_sr, filter_radius, volume_envelope, protect, split_audio, f0_autotune_strength, input_audio_name, checkpointing, onnx_f0_mode, formant_shifting, formant_qfrency, formant_timbre, f0_file, embedders_mode, proposal_pitch, proposal_pitch_threshold):
