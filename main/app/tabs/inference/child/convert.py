@@ -19,7 +19,7 @@ from main.app.core.ui import (
 def convert_tab():
     # Model Selection Section
     with gr.Accordion(translations["model_accordion"], open=True):
-        with gr.Row():
+        with gr.Row(equal_height=True):
             model_pth = gr.Dropdown(
                 label=translations["model_name"],
                 choices=model_name,
@@ -34,10 +34,10 @@ def convert_tab():
                 interactive=True,
                 allow_custom_value=True
             )
-            with gr.Row():
+            with gr.Row(equal_height=True):
                 refresh_models = gr.Button(translations["refesh"])
             # Conversion Settings Section
-    with gr.Row():
+    with gr.Row(equal_height=True):
         with gr.Column():
             pitch = gr.Slider(
                 minimum=-20,
