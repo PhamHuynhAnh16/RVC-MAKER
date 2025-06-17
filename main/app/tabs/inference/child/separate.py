@@ -43,8 +43,8 @@ def separate_tab():
                 with gr.Row():
                     mdx_hop_length = gr.Slider(label="Hop length", info=translations["hop_length_info"], minimum=1, maximum=8192, value=1024, step=1, interactive=True, visible=backing.value or reverb.value or separator_model.value in mdx_model)
     with gr.Row():
-        with gr.Column():
-            input = gr.File(label=translations["drop_audio"], file_types=[".wav", ".mp3", ".flac", ".ogg", ".opus", ".m4a", ".mp4", ".aac", ".alac", ".wma", ".aiff", ".webm", ".ac3"])    
+        input = gr.File(label=translations["drop_audio"], file_types=[".wav", ".mp3", ".flac", ".ogg", ".opus", ".m4a", ".mp4", ".aac", ".alac", ".wma", ".aiff", ".webm", ".ac3"])
+        with gr.Column():    
             with gr.Accordion(translations["use_url"], open=False):
                 url = gr.Textbox(label=translations["url_audio"], value="", placeholder="https://www.youtube.com/...", scale=6)
                 download_button = gr.Button(translations["downloads"])
@@ -60,7 +60,7 @@ def separate_tab():
             audio_input = gr.Audio(show_download_button=True, interactive=False, label=translations["input_audio"])
     with gr.Row():
         gr.Markdown(translations["output_separator"])
-    with gr.Row():
+    with gr.Row(equal_height=True):
         instruments_audio = gr.Audio(show_download_button=True, interactive=False, label=translations["instruments"])
         original_vocals = gr.Audio(show_download_button=True, interactive=False, label=translations["original_vocal"])
         main_vocals = gr.Audio(show_download_button=True, interactive=False, label=translations["main_vocal"], visible=backing.value)
