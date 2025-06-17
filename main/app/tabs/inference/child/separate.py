@@ -46,6 +46,7 @@ def separate_tab():
                    
     with gr.Row():
         input = gr.File(label=translations["drop_audio"], file_types=[".wav", ".mp3", ".flac", ".ogg", ".opus", ".m4a", ".mp4", ".aac", ".alac", ".wma", ".aiff", ".webm", ".ac3"])
+    audio_input = gr.Audio(show_download_button=True, interactive=False, label=translations["input_audio"])
     with gr.Accordion(translations["use_url"], open=False):
         url = gr.Textbox(label=translations["url_audio"], value="", placeholder="https://www.youtube.com/...", scale=6)
         download_button = gr.Button(translations["downloads"])
@@ -58,7 +59,7 @@ def separate_tab():
         input_audio = gr.Dropdown(label=translations["audio_path"], value="", choices=paths_for_files, allow_custom_value=True, interactive=True)
         refesh_separator = gr.Button(translations["refesh"])
         output_separator = gr.Textbox(label=translations["output_folder"], value="audios", placeholder="audios", info=translations["output_folder_info"], interactive=True)     
-    audio_input = gr.Audio(show_download_button=True, interactive=False, label=translations["input_audio"])
+    
     with gr.Row():
         gr.Markdown(translations["output_separator"])
     with gr.Row(equal_height=True):
