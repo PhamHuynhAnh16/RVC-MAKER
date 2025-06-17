@@ -13,7 +13,7 @@ from importlib import metadata, import_module
 now_dir = os.getcwd()
 sys.path.append(os.getcwd())
 
-
+user_hf = "ArbCl/EIP-cebwrpg"
 from main.configs.config import Config
 
 from main.tools.huggingface import HF_download_file
@@ -153,7 +153,7 @@ class Separator:
             self.logger.warning(translations["vip_print"])
 
     def list_supported_model_files(self):
-        response = requests.get(codecs.decode("uggcf://uhttvatsnpr.pb/NauC/Ivrganzrfr-EIP-Cebwrpg/enj/znva/wfba/hie_zbqryf.wfba", "rot13"))
+        response = requests.get(codecs.decode(f"uggcf://uhttvatsnpr.pb/{user_hf}/enj/znva/wfba/hie_zbqryf.wfba", "rot13"))
         response.raise_for_status()
         model_downloads_list = response.json()
         self.logger.debug(translations["load_download_json"])
@@ -168,7 +168,7 @@ class Separator:
         for model_type, model_list in supported_model_files_grouped.items():
             for model_friendly_name, model_download_list in model_list.items():
                 self.model_is_uvr_vip = "VIP" in model_friendly_name
-                model_repo_url_prefix = codecs.decode("uggcf://uhttvatsnpr.pb/NauC/Ivrganzrfr-EIP-Cebwrpg/erfbyir/znva/hie5_zbqryf", "rot13")
+                model_repo_url_prefix = codecs.decode(f"uggcf://uhttvatsnpr.pb/{user_hf}/erfbyir/znva/hie5_zbqryf", "rot13")
 
                 if isinstance(model_download_list, str) and model_download_list == model_filename:
                     self.logger.debug(translations["single_model"].format(model_friendly_name=model_friendly_name))
@@ -224,7 +224,7 @@ class Separator:
         self.logger.debug(translations["hash_md5"])
         model_hash = self.get_model_hash(model_path)
         self.logger.debug(translations["model_hash"].format(model_path=model_path, model_hash=model_hash))
-        mdx_model_data_path = codecs.decode("https://huggingface.co/AnuC/VietnameseRess-VIP-CUE/raw/main/json/model_data.json", "rot13")
+        mdx_model_data_path = codecs.decode(f"uggcf://uhttvatsnpr.pb/{user_hf}/erfbyir/znva/wfba/zbqry_qngn.wfb", rot13)
         self.logger.debug(translations["mdx_data"].format(mdx_model_data_path=mdx_model_data_path))
         response = requests.get(mdx_model_data_path)
         response.raise_for_status()
