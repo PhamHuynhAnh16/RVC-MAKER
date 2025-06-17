@@ -34,32 +34,9 @@ def convert_tab():
                 interactive=True,
                 allow_custom_value=True
             )
-        with gr.Row():
-            refresh_models = gr.Button(translations["refesh"])
-
-    # Audio Input Section
-    with gr.Row():
-        with gr.Column():
-            input_audio = gr.File(
-                label=translations["drop_audio"],
-                file_types=[".wav", ".mp3", ".flac", ".ogg", ".opus", ".m4a", ".mp4", ".aac", ".alac", ".wma", ".aiff", ".webm", ".ac3"]
-            )
-            play_audio = gr.Audio(
-                show_download_button=True,
-                interactive=False,
-                label=translations["input_audio"]
-            )
-            input_audio_path = gr.Dropdown(
-                label=translations["audio_path"],
-                value="",
-                choices=paths_for_files,
-                info=translations["provide_audio"],
-                allow_custom_value=True,
-                interactive=True
-            )
-            refresh_audio = gr.Button(translations["refesh"])
-
-    # Conversion Settings Section
+            with gr.Row():
+                refresh_models = gr.Button(translations["refesh"])
+            # Conversion Settings Section
     with gr.Row():
         with gr.Column():
             pitch = gr.Slider(
@@ -92,6 +69,29 @@ def convert_tab():
                 visible=bool(model_index.value)
             )
 
+    # Audio Input Section
+    with gr.Row():
+        with gr.Column():
+            input_audio = gr.File(
+                label=translations["drop_audio"],
+                file_types=[".wav", ".mp3", ".flac", ".ogg", ".opus", ".m4a", ".mp4", ".aac", ".alac", ".wma", ".aiff", ".webm", ".ac3"]
+            )
+            play_audio = gr.Audio(
+                show_download_button=True,
+                interactive=False,
+                label=translations["input_audio"]
+            )
+            input_audio_path = gr.Dropdown(
+                label=translations["audio_path"],
+                value="",
+                choices=paths_for_files,
+                info=translations["provide_audio"],
+                allow_custom_value=True,
+                interactive=True
+            )
+            refresh_audio = gr.Button(translations["refesh"])
+
+    
     # Advanced Settings Accordion
     with gr.Accordion(translations["setting"], open=False):
         with gr.Group():
