@@ -15,7 +15,6 @@ def separate_tab():
         gr.Markdown(translations["4_part"])
     with gr.Row():
         with gr.Column():
-            with gr.Group():  
             with gr.Row():
                 separator_model = gr.Dropdown(label=translations["separator_model"], value=uvr_model[0], choices=uvr_model, interactive=True)
                 separator_backing_model = gr.Dropdown(label=translations["separator_backing_model"], value="Version-1", choices=["Version-1", "Version-2"], interactive=True, visible=backing.value)
