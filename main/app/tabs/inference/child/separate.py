@@ -17,6 +17,11 @@ def separate_tab():
         with gr.Column():
             with gr.Row():
                 separator_model = gr.Dropdown(label=translations["separator_model"], value=uvr_model[0], choices=uvr_model, interactive=True)
+                
+                backing = gr.Checkbox(label=translations["separator_backing"], value=False, interactive=True, min_width=140)
+                reverb = gr.Checkbox(label=translations["dereveb_audio"], value=False, interactive=True, min_width=140)
+                backing_reverb = gr.Checkbox(label=translations["dereveb_backing"], value=False, interactive=False, min_width=140)               
+                denoise = gr.Checkbox(label=translations["denoise_mdx"], value=False, interactive=False, min_width=140)   
                 separator_backing_model = gr.Dropdown(label=translations["separator_backing_model"], value="Version-1", choices=["Version-1", "Version-2"], interactive=True, visible=backing.value)
     with gr.Row():
         with gr.Column():
@@ -37,10 +42,6 @@ def separate_tab():
                 mdx_hop_length = gr.Slider(label="Hop length", info=translations["hop_length_info"], minimum=1, maximum=8192, value=1024, step=1, interactive=True, visible=backing.value or reverb.value or separator_model.value in mdx_model)
             with gr.Row():       
                 cleaner = gr.Checkbox(label=translations["clear_audio"], value=False, interactive=True, min_width=140)       
-                backing = gr.Checkbox(label=translations["separator_backing"], value=False, interactive=True, min_width=140)
-                reverb = gr.Checkbox(label=translations["dereveb_audio"], value=False, interactive=True, min_width=140)
-                backing_reverb = gr.Checkbox(label=translations["dereveb_backing"], value=False, interactive=False, min_width=140)               
-                denoise = gr.Checkbox(label=translations["denoise_mdx"], value=False, interactive=False, min_width=140)   
     with gr.Row():
         input = gr.File(label=translations["drop_audio"], file_types=[".wav", ".mp3", ".flac", ".ogg", ".opus", ".m4a", ".mp4", ".aac", ".alac", ".wma", ".aiff", ".webm", ".ac3"])
     with gr.Accordion(translations["use_url"], open=False):
