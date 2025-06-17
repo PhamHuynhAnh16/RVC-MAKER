@@ -5,7 +5,7 @@ import gradio as gr
 sys.path.append(os.getcwd())
 
 from main.app.core.presets import load_presets, save_presets
-from main.app.core.inference import convert_audio, convert_selection
+from main.app.core.inference.inference import convert_audio, convert_selection
 from main.app.variables import (
     translations, paths_for_files, sample_rate_choice, model_name, index_path,
     method_f0, f0_file, embedders_mode, embedders_model, presets_file, configs
