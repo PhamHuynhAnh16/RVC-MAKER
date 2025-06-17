@@ -11,9 +11,11 @@ import onnxruntime
 from importlib import metadata, import_module
 
 now_dir = os.getcwd()
-sys.path.append(now_dir)
+sys.path.append(os.getcwd())
 
-from main.configs import Config
+
+from main.configs.config import Config
+
 from main.tools.huggingface import HF_download_file
 
 config = Config()
