@@ -17,11 +17,12 @@ def separate_tab():
         with gr.Column():
             with gr.Row():
                 separator_model = gr.Dropdown(label=translations["separator_model"], value=uvr_model[0], choices=uvr_model, interactive=True)
-                
+            with gr.Row():
                 backing = gr.Checkbox(label=translations["separator_backing"], value=False, interactive=True, min_width=140)
                 reverb = gr.Checkbox(label=translations["dereveb_audio"], value=False, interactive=True, min_width=140)
                 backing_reverb = gr.Checkbox(label=translations["dereveb_backing"], value=False, interactive=False, min_width=140)               
                 denoise = gr.Checkbox(label=translations["denoise_mdx"], value=False, interactive=False, min_width=140)   
+            with gr.Row():
                 separator_backing_model = gr.Dropdown(label=translations["separator_backing_model"], value="Version-1", choices=["Version-1", "Version-2"], interactive=True, visible=backing.value)
     with gr.Row():
         with gr.Column():
