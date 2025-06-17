@@ -13,6 +13,14 @@ from main.app.variables import translations, paths_for_files, sample_rate_choice
 def audio_effects_tab():
     with gr.Row():
         gr.Markdown(translations["audio_effects_edit"])
+    
+    with gr.Row():
+        with gr.Accordion(translations["input_output"], open=False):
+            with gr.Row():
+                upload_audio = gr.File(label=translations["drop_audio"], file_types=[".wav", ".mp3", ".flac", ".ogg", ".opus", ".m4a", ".mp4", ".aac", ".alac", ".wma", ".aiff", ".webm", ".ac3"])
+            with gr.Row():
+                audio_in_path = gr.Dropdown(label=translations["input_audio"], value="", choices=paths_for_files, info=translations["provide_audio"], interactive=True, allow_custom_value=True)
+                audio_out_path = gr.Textbox(label=translations["output_audio"], value="audios/audio_effects.wav", placeholder="audios/audio_effects.wav", info=translations["provide_output"], interactive=True)
     with gr.Row():
         with gr.Column():
             with gr.Row():
@@ -22,17 +30,11 @@ def audio_effects_tab():
                 phaser_check_box = gr.Checkbox(label=translations["phaser"], value=False, interactive=True)
                 compressor_check_box = gr.Checkbox(label=translations["compressor"], value=False, interactive=True)
                 more_options = gr.Checkbox(label=translations["more_option"], value=False, interactive=True)    
-    with gr.Row():
-        with gr.Accordion(translations["input_output"], open=False):
-            with gr.Row():
-                upload_audio = gr.File(label=translations["drop_audio"], file_types=[".wav", ".mp3", ".flac", ".ogg", ".opus", ".m4a", ".mp4", ".aac", ".alac", ".wma", ".aiff", ".webm", ".ac3"])
-            with gr.Row():
-                audio_in_path = gr.Dropdown(label=translations["input_audio"], value="", choices=paths_for_files, info=translations["provide_audio"], interactive=True, allow_custom_value=True)
-                audio_out_path = gr.Textbox(label=translations["output_audio"], value="audios/audio_effects.wav", placeholder="audios/audio_effects.wav", info=translations["provide_output"], interactive=True)
-            with gr.Row():
-                with gr.Column():
-                    audio_combination = gr.Checkbox(label=translations["merge_instruments"], value=False, interactive=True)
-                    audio_combination_input = gr.Dropdown(label=translations["input_audio"], value="", choices=paths_for_files, info=translations["provide_audio"], interactive=True, allow_custom_value=True, visible=audio_combination.value)
+                
+        with gr.Row():
+            with gr.Column():
+                audio_combination = gr.Checkbox(label=translations["merge_instruments"], value=False, interactive=True)
+                audio_combination_input = gr.Dropdown(label=translations["input_audio"], value="", choices=paths_for_files, info=translations["provide_audio"], interactive=True, allow_custom_value=True, visible=audio_combination.value)
             with gr.Row():
                 main_vol = gr.Slider(minimum=-80, maximum=80, label=translations["main_volume"], info=translations["main_volume_info"], value=-4, step=1, interactive=True, visible=audio_combination.value)
                 combine_vol = gr.Slider(minimum=-80, maximum=80, label=translations["combination_volume"], info=translations["combination_volume_info"], value=-7, step=1, interactive=True, visible=audio_combination.value)
