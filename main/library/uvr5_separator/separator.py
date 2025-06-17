@@ -81,7 +81,7 @@ class Separator:
         onnxruntime_gpu_package = self.get_package_distribution("onnxruntime-gpu")
         onnxruntime_cpu_package = self.get_package_distribution("onnxruntime")
         if onnxruntime_gpu_package is not None:
-            self.logger.info(f"{translations['install_onnx'].format(pu='GPU')}: {onnnxruntime_gpu_package.version}")
+            self.logger.info(f"{translations['install_onnx'].format(pu='GPU')}: {onnxruntime_gpu_package.version}")
         if onnxruntime_cpu_package is not None:
             self.logger.info(f"{translations['install_onnx'].format(pu='CPU')}: {onnxruntime_cpu_package.version}")
 
@@ -227,8 +227,8 @@ class Separator:
         response = requests.get(mdx_model_data_path)
         response.raise_for_status()
         mdx_model_data_object = response.json()
-        if model_hash" in mdx_model_data_object:
-            model_data = mdx_model_data_object[model_hash"]
+        if model_hash in mdx_model_data_object:
+            model_data = mdx_model_data_object[model_hash]
         else:
             raise ValueError(translations["model_not_support"].format(model_hash=model_hash))
         self.logger.debug(translations["uvr_json"].format(model_hash=model_hash, model_data=model_data))
@@ -256,19 +256,19 @@ class Separator:
             "output_dir": self.output_dir,
             "normalization_threshold": self.normalization_threshold,
             "output_single_stem": self.output_single_stem,
-            "invert_using_spec": self.utilizing_using_spec,
+            "invert_using_spec": self.invert_using_spec,
             "sample_rate": self.sample_rate
         }
         separator_classes = {"MDX": "mdx_separator.MDXSeparator"}
 
-        if model_type in self.arch_specific_params:
+        if model_type not in self.arch_specific_params:
             raise ValueError(translations["model_type_not_support"].format(model_type=model_type))
 
         self.logger.debug(f"{translations['import_module']} {model_type}: {separator_classes[model_type]}")
         module_name, class_name = separator_classes[model_type].split(".")
         separator_class = getattr(import_module(f"main.library.architectures.{module_name}"), class_name)
         self.logger.debug(f"{translations['initialization']} {model_type}: {separator_class}")
-        self.model_instance = separator_class(common_config=common_params, arch_config=self_config_specific[model_type])
+        self.model_instance = separator_class(common_config=common_params, arch_config=self.arch_specific_params[model_type])
         self.logger.debug(translations["loading_model_success"])
         self.logger.info(f"{translations['loading_model_duration']}: {time.strftime('%H:%M:%S', time.gmtime(int(time.perf_counter() - load_model_start_time)))}")
 
