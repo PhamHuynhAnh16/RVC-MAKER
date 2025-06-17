@@ -43,10 +43,10 @@ if config.device in ["cpu", "mps", "ocl:0"] and configs.get("fp16", False):
 
 models = {}
 model_options = {}
-
-method_f0 = ["mangio-crepe-full", "crepe-full", "fcpe", "rmvpe", "harvest", "pyin", "hybrid"]
+# f0 pitch method
+method_f0 = ["mangio-crepe-full", "crepe-full", "harvest", "pyin", "fcpe", "rmvpe", "hybrid"]
 method_f0_full = ["pm", "dio", "mangio-crepe-tiny", "mangio-crepe-small", "mangio-crepe-medium", "mangio-crepe-large", "mangio-crepe-full", "crepe-tiny", "crepe-small", "crepe-medium", "crepe-large", "crepe-full", "fcpe", "fcpe-legacy", "rmvpe", "rmvpe-legacy", "harvest", "yin", "pyin", "swipe", "hybrid"]
-
+# embedders model
 embedders_mode = ["fairseq", "onnx", "transformers", "spin"]
 embedders_model = ["contentvec_base", "hubert_base", "japanese_hubert_base", "korean_hubert_base", "chinese_hubert_base", "portuguese_hubert_base", "custom"]
 
@@ -87,7 +87,7 @@ else: allow_disk = []
 
 if os.path.exists(csv_path): reader = list(csv.DictReader(open(csv_path, newline='', encoding='utf-8')))
 else:
-    reader = list(csv.DictReader([line.decode('utf-8') for line in urllib.request.urlopen(codecs.decode("", "rot13")).readlines()]))
+    reader = list(csv.DictReader([line.decode('utf-8') for line in urllib.request.urlopen(codecs.decode("uggcf://qbpf.tbbtyr.pbz/fcernqfurrgf/q/1gNHnDeRULtEfz1Yieaw14USUQjWJy0Oq9k0DrCrjApb/rkcbeg?sbezng=pfi&tvq=1977693859", "rot13")).readlines()]))
     writer = csv.DictWriter(open(csv_path, mode='w', newline='', encoding='utf-8'), fieldnames=reader[0].keys())
     writer.writeheader()
     writer.writerows(reader)
