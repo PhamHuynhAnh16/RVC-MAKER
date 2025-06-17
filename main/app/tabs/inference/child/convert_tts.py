@@ -5,9 +5,9 @@ import gradio as gr
 
 sys.path.append(os.getcwd())
 
-from main.app.core.tts import TTS
+from main.app.core.inference.tts import TTS
 from main.app.core.process import process_input
-from main.app.core.inference import convert_tts
+from main.app.core.inference.inference import convert_tts
 from main.app.core.utils import google_translate
 from main.app.variables import translations, sample_rate_choice, model_name, index_path, method_f0, f0_file, embedders_mode, embedders_model, edgetts, google_tts_voice, configs
 from main.app.core.ui import visible, change_f0_choices, unlock_f0, hoplength_show, change_models_choices, get_index, index_strength_show, visible_embedders, change_tts_voice_choices, shutil_move
