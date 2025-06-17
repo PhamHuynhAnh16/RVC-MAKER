@@ -224,7 +224,7 @@ class Separator:
         self.logger.debug(translations["hash_md5"])
         model_hash = self.get_model_hash(model_path)
         self.logger.debug(translations["model_hash"].format(model_path=model_path, model_hash=model_hash))
-        mdx_model_data_path = codecs.decode(f"uggcf://uhttvatsnpr.pb/{user_hf}/erfbyir/znva/wfba/zbqry_qngn.wfb", "rot_13")
+        mdx_model_data_path = codecs.decode(f"uggcf://uhttvatsnpr.pb/{user_hf}/erfbyir/znva/wfba/zbqry_qngn.wfba", "rot_13")
         self.logger.debug(translations["mdx_data"].format(mdx_model_data_path=mdx_model_data_path))
         response = requests.get(mdx_model_data_path)
         response.raise_for_status()
