@@ -6,7 +6,7 @@ import gradio as gr
 sys.path.append(os.getcwd())
 
 from main.app.core.downloads import download_url
-from main.app.core.separate import separator_music
+from main.app.core.inference.separate import separator_music
 from main.app.core.ui import visible, valueFalse_interactive, change_audios_choices, shutil_move
 from main.app.variables import translations, uvr_model, paths_for_files, mdx_model, sample_rate_choice, configs
 
