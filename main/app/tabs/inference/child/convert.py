@@ -18,25 +18,24 @@ from main.app.core.ui import (
 
 def convert_tab():
     # Model Selection Section
-    with gr.Accordion(translations["model_accordion"], open=True):
+    with gr.Row(equal_height=True):
+        model_pth = gr.Dropdown(
+            label=translations["model_name"],
+            choices=model_name,
+            value=model_name[0] if model_name else "",
+            interactive=True,
+            allow_custom_value=True
+        )
+        model_index = gr.Dropdown(
+            label=translations["index_path"],
+            choices=index_path,
+            value=index_path[0] if index_path else "",
+            interactive=True,
+            allow_custom_value=True
+        )
         with gr.Row(equal_height=True):
-            model_pth = gr.Dropdown(
-                label=translations["model_name"],
-                choices=model_name,
-                value=model_name[0] if model_name else "",
-                interactive=True,
-                allow_custom_value=True
-            )
-            model_index = gr.Dropdown(
-                label=translations["index_path"],
-                choices=index_path,
-                value=index_path[0] if index_path else "",
-                interactive=True,
-                allow_custom_value=True
-            )
-            with gr.Row(equal_height=True):
-                refresh_models = gr.Button(translations["refesh"])
-            # Conversion Settings Section
+            refresh_models = gr.Button(translations["refesh"])
+    # Conversion Settings Section
     with gr.Row(equal_height=True):
         with gr.Column():
             pitch = gr.Slider(
@@ -110,6 +109,13 @@ def convert_tab():
                 formant_shifting = gr.Checkbox(label=translations["formantshift"], value=False, interactive=True)
                 proposal_pitch = gr.Checkbox(label=translations["proposal_pitch"], value=False, interactive=True)
             with gr.Row():
+                resample_sr = gr.Radio(
+                    choices=[0] + sample_rate_choice,
+                    label=translations["resample"],
+                    info=translations["resample_info"],
+                    value=0,
+                    interactive=True
+                )
                 f0_autotune_strength = gr.Slider(
                     minimum=0,
                     maximum=1,
@@ -119,13 +125,6 @@ def convert_tab():
                     step=0.1,
                     interactive=True,
                     visible=False
-                )
-                resample_sr = gr.Radio(
-                    choices=[0] + sample_rate_choice,
-                    label=translations["resample"],
-                    info=translations["resample_info"],
-                    value=0,
-                    interactive=True
                 )
                 proposal_pitch_threshold = gr.Slider(
                     minimum=50.0,
