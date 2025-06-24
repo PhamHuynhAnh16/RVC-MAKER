@@ -15,13 +15,11 @@ from main.app.core.ui import visible, change_f0_choices, unlock_f0, hoplength_sh
 def convert_tts_tab():
     with gr.Row():
         gr.Markdown(translations["convert_text_markdown_2"])
+    model_pth0 = gr.Dropdown(label=translations["model_name"], choices=model_name, value=model_name[0] if len(model_name) >= 1 else "", interactive=True, allow_custom_value=True)
+    model_index0 = gr.Dropdown(label=translations["index_path"], choices=index_path, value=index_path[0] if len(index_path) >= 1 else "", interactive=True, allow_custom_value=True)
     with gr.Row():
-        with gr.Accordion(translations["model_accordion"], open=True):
-            with gr.Row():
-                model_pth0 = gr.Dropdown(label=translations["model_name"], choices=model_name, value=model_name[0] if len(model_name) >= 1 else "", interactive=True, allow_custom_value=True)
-                model_index0 = gr.Dropdown(label=translations["index_path"], choices=index_path, value=index_path[0] if len(index_path) >= 1 else "", interactive=True, allow_custom_value=True)
-            with gr.Row():
-                refesh1 = gr.Button(translations["refesh"])
+        refesh1 = gr.Button(translations["refesh"])
+    with gr.Row():
         with gr.Column():
             with gr.Group():
                 with gr.Row():
