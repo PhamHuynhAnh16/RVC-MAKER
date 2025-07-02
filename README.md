@@ -14,7 +14,7 @@ A high-quality voice conversion tool focused on ease of use and performance.
 
 [![RVC MAKER](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/unchCrew/RVC-MAKER)
 [![Open In Colab](https://img.shields.io/badge/Colab-F9AB00?style=for-the-badge&logo=googlecolab&color=525252)](https://colab.research.google.com/github/TheNeodev/Notebook/blob/main/RVC-MAKER.ipynb)
-[![Licence](https://img.shields.io/github/license/saltstack/salt?style=for-the-badge)](https://github.com/TheNeodev/RVC-MAKER/blob/main/LICENSE)
+[![Licence](https://img.shields.io/badge/LICENSE-MIT-green?style=for-the-badge)](https://github.com/UnchCrew/RVC-MAKER/blob/main/LICENSE)
 
 [![Huggingface](https://img.shields.io/badge/🤗%20-Spaces-yellow.svg?style=for-the-badge)](https://huggingface.co/spaces/NeoPy/RVC-MAKER)
 
@@ -140,13 +140,13 @@ python main\app\parser.py --help
 
 | Project | Author/Organization | License |
 |---------|---------------------|---------|
-| [Vietnamese-RVC](https://github.com/PhamHuynhAnh16/Vietnamese-RVC) | Phạm Huỳnh Anh | Apache License 2.0 |
+| [Vietnamese-RVC](https://github.com/PhamHuynhAnh16/Vietnamese-RVC) | Phạm Huỳnh Anh | MIT License |
 | [Applio](https://github.com/IAHispano/Applio/tree/main) | IAHispano | MIT License |
 | [Python-audio-separator](https://github.com/nomadkaraoke/python-audio-separator/tree/main) | Nomad Karaoke | MIT License |
 | [Retrieval-based-Voice-Conversion-WebUI](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI/tree/main) | RVC Project | MIT License |
 | [RVC-ONNX-INFER-BY-Anh](https://github.com/PhamHuynhAnh16/RVC_Onnx_Infer) | Phạm Huỳnh Anh | MIT License |
 | [Torch-Onnx-Crepe-By-Anh](https://github.com/PhamHuynhAnh16/TORCH-ONNX-CREPE) | Phạm Huỳnh Anh | MIT License |
-| [Hubert-No-Fairseq](https://github.com/PhamHuynhAnh16/hubert-no-fairseq) | Pháº¡m Huá»³nh Anh | MIT License |
+| [Hubert-No-Fairseq](https://github.com/PhamHuynhAnh16/hubert-no-fairseq) | Phạm Huỳnh Anh | MIT License |
 | [Local-attention](https://github.com/lucidrains/local-attention) | Phil Wang | MIT License |
 | [TorchFcpe](https://github.com/CNChTu/FCPE/tree/main) | CN_ChiTu | MIT License |
 | [FcpeONNX](https://github.com/deiteris/voice-changer/blob/master-custom/server/utils/fcpe_onnx.py) | Yury | MIT License |
@@ -154,12 +154,12 @@ python main\app\parser.py --help
 | [Mediafiredl](https://github.com/Gann4Life/mediafiredl) | Santiago Ariel Mansilla | MIT License |
 | [Noisereduce](https://github.com/timsainb/noisereduce) | Tim Sainburg | MIT License |
 | [World.py-By-Anh](https://github.com/PhamHuynhAnh16/world.py) | Phạm Huỳnh Anh | MIT License |
-| [Mega.py](https://github.com/odwyersoftware/mega.py) | O'Dwyer Software | Apache 2.0 License |
+| [Mega.py](https://github.com/3v1n0/mega.py) | Marco Trevisan | No License |
 | [Gdown](https://github.com/wkentaro/gdown) | Kentaro Wada | MIT License |
 | [Whisper](https://github.com/openai/whisper) | OpenAI | MIT License |
 | [PyannoteAudio](https://github.com/pyannote/pyannote-audio) | pyannote | MIT License |
 | [AudioEditingCode](https://github.com/HilaManor/AudioEditingCode) | Hila Manor | MIT License |
-| [StftPitchShift](https://github.com/jurihock/stftPitchShift) | JÃ¼rgen Hock | MIT License |
+| [StftPitchShift](https://github.com/jurihock/stftPitchShift) | Jürgen Hock | MIT License |
 | [Codename-RVC-Fork-3](https://github.com/codename0og/codename-rvc-fork-3) | Codename;0 | MIT License |
 
 
