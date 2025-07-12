@@ -37,7 +37,7 @@ def download_url(url):
             "no_warnings": True,
             "noplaylist": True,
             "verbose": False,
-            "cookies":, cookies_dir
+            "cookies": cookies_dir
         }
 
         gr_info(translations["start"].format(start=translations["download_music"]))
