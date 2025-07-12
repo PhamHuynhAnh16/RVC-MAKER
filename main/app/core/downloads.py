@@ -25,8 +25,7 @@ def download_url(url):
 
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore")
-        ydl_opts = 
-        {
+        ydl_opts = {
             "format": "bestaudio/best",
             "postprocessors":
             [{
