@@ -17,13 +17,29 @@ from main.app.core.ui import gr_info, gr_warning, gr_error, process_output
 from main.app.variables import logger, translations, model_options, configs
 from main.app.core.process import move_files_from_directory, fetch_pretrained_data
 
+cookies_dir = os.path.join(os.getcwd(), "assets", "youtube", "config.txt")
+
 def download_url(url):
     if not url: return gr_warning(translations["provide_url"])
     if not os.path.exists(configs["audios_path"]): os.makedirs(configs["audios_path"], exist_ok=True)
 
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore")
-        ydl_opts = {"format": "bestaudio/best", "postprocessors": [{"key": "FFmpegExtractAudio", "preferredcodec": "wav", "preferredquality": "192"}], "quiet": True, "no_warnings": True, "noplaylist": True, "verbose": False}
+        ydl_opts = 
+        {
+            "format": "bestaudio/best",
+            "postprocessors":
+            [{
+                "key": "FFmpegExtractAudio", 
+                "preferredcodec": "wav", 
+                "preferredquality": "192"
+            }],
+            "quiet": True,
+            "no_warnings": True,
+            "noplaylist": True,
+            "verbose": False,
+            "cookies", cookies_dir
+        }
 
         gr_info(translations["start"].format(start=translations["download_music"]))
 
