@@ -12,6 +12,7 @@ sys.path.append(os.getcwd())
 
 from main.app.variables import translations
 from main.library.utils import get_providers
+from main.library.algorithm.autopitch import AutoPitch
 from main.library.predictors.Generator import Generator
 from main.inference.conversion.utils import change_rms, clear_gpu_cache
 
@@ -39,6 +40,7 @@ class Pipeline:
         self.device = config.device
         self.is_half = config.is_half
         self.f0_generator = Generator(self.sample_rate, self.window, self.f0_min, self.f0_max, self.is_half, self.device, get_providers(), False)
+        self.tgt_sr = tgt_sr
     
     def extract_features(self, model, feats, version):
         return torch.as_tensor(model.run([model.get_outputs()[0].name, model.get_outputs()[1].name], {"feats": feats.detach().cpu().numpy()})[0 if version == "v1" else 1], dtype=torch.float32, device=feats.device)
@@ -102,7 +104,7 @@ class Pipeline:
 
         return audio1
     
-    def pipeline(self, logger, model, net_g, sid, audio, f0_up_key, f0_method, file_index, index_rate, pitch_guidance, filter_radius, volume_envelope, version, protect, hop_length, f0_autotune, f0_autotune_strength, suffix, embed_suffix, f0_file=None, f0_onnx=False, pbar=None, proposal_pitch=False, proposal_pitch_threshold=255.0):
+    def pipeline(self, logger, model, net_g, sid, audio, f0_up_key, f0_method, file_index, index_rate, pitch_guidance, filter_radius, volume_envelope, version, protect, hop_length, f0_autotune, f0_autotune_strength, suffix, embed_suffix, f0_file=None, f0_onnx=False, pbar=None, auto_pitch=False):#, proposal_pitch_threshold=255.0):
         self.suffix = suffix
         self.embed_suffix = embed_suffix
 
@@ -152,6 +154,11 @@ class Pipeline:
                 inp_f0 = None
 
         pbar.update(1)
+        if auto_pitch: # Code does not support energy
+            if not hasattr(self, "autopitch"): self.autopitch = AutoPitch(self, os.path.join("assets", "autopitch", "rvc_feats.npz"), os.path.join("assets", "autopitch", "emb_feats.npz"), pitch_guidance, version, False, self.device)
+            proposal_pitch_threshold, proposal_pitch = self.autopitch.autopitch(model, net_g, sid, index, big_npy, self.tgt_sr)
+        else: proposal_pitch_threshold, proposal_pitch = 0, False
+
         if pitch_guidance:
             self.f0_generator.hop_length, self.f0_generator.f0_onnx_mode = hop_length, f0_onnx
             pitch, pitchf = self.f0_generator.calculator(self.x_pad, f0_method, audio_pad, f0_up_key, p_len, filter_radius, f0_autotune, f0_autotune_strength, manual_f0=inp_f0, proposal_pitch=proposal_pitch, proposal_pitch_threshold=proposal_pitch_threshold)

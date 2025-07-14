@@ -107,7 +107,7 @@ def convert_tab():
             with gr.Row():
                 split_audio = gr.Checkbox(label=translations["split_audio"], value=False, interactive=True)
                 formant_shifting = gr.Checkbox(label=translations["formantshift"], value=False, interactive=True)
-                proposal_pitch = gr.Checkbox(label=translations["proposal_pitch"], value=False, interactive=True)
+                auto_pitch = gr.Checkbox(label=translations["proposal_pitch"], value=False, interactive=True)
             with gr.Row():
                 resample_sr = gr.Radio(
                     choices=[0] + sample_rate_choice,
@@ -126,16 +126,16 @@ def convert_tab():
                     interactive=True,
                     visible=False
                 )
-                proposal_pitch_threshold = gr.Slider(
-                    minimum=50.0,
-                    maximum=1200.0,
-                    label=translations["proposal_pitch_threshold"], 
-                    info=translations["proposal_pitch_threshold_info"], 
-                    value=255.0, 
-                    step=0.1, 
-                    interactive=True, 
-                    visible=proposal_pitch.value
-                )
+                # proposal_pitch_threshold = gr.Slider(
+                #     minimum=50.0,
+                #     maximum=1200.0,
+                #     label=translations["proposal_pitch_threshold"], 
+                #     info=translations["proposal_pitch_threshold_info"], 
+                #     value=255.0, 
+                #     step=0.1, 
+                #     interactive=True, 
+                #     visible=proposal_pitch.value
+                # )
                 filter_radius = gr.Slider(
                     minimum=0,
                     maximum=7,
@@ -423,7 +423,7 @@ def convert_tab():
         outputs=[presets_name]
     )
     upload_presets.upload(fn=lambda audio_in: shutil_move(audio_in.name, configs["presets_path"]), inputs=[upload_presets], outputs=[presets_name])
-    proposal_pitch.change(fn=visible, inputs=[proposal_pitch], outputs=[proposal_pitch_threshold])
+    #proposal_pitch.change(fn=visible, inputs=[proposal_pitch], outputs=[proposal_pitch_threshold])
 
     audio_select.change(fn=lambda: visible(True), inputs=[], outputs=[convert_button_2])
     convert_button.click(fn=lambda: visible(False), inputs=[], outputs=[convert_button])
@@ -438,7 +438,7 @@ def convert_tab():
             hop_length, embedders, custom_embedders, resample_sr, filter_radius,
             volume_envelope, protect, split_audio, f0_autotune_strength, checkpointing,
             onnx_f0_mode, formant_shifting, formant_qfrency, formant_timbre, f0_file_dropdown,
-            embed_mode, proposal_pitch, proposal_pitch_threshold
+            embed_mode, auto_pitch, #proposal_pitch_threshold
         ],
         outputs=[audio_select, main_convert, backing_convert, main_backing, original_convert, vocal_instrument, convert_button],
         api_name="convert_selection"
@@ -452,7 +452,7 @@ def convert_tab():
             hop_length, embedders, custom_embedders, resample_sr, filter_radius,
             volume_envelope, protect, split_audio, f0_autotune_strength, audio_select,
             checkpointing, onnx_f0_mode, formant_shifting, formant_qfrency, formant_timbre,
-            f0_file_dropdown, embed_mode, proposal_pitch, proposal_pitch_threshold
+            f0_file_dropdown, embed_mode, auto_pitch, #proposal_pitch_threshold
         ],
         outputs=[main_convert, backing_convert, main_backing, original_convert, vocal_instrument, convert_button],
         api_name="convert_audio"

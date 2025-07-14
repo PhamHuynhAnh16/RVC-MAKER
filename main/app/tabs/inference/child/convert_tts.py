@@ -74,10 +74,10 @@ def convert_tts_tab():
                     with gr.Row():
                         autotune3 = gr.Checkbox(label=translations["autotune"], value=False, interactive=True) 
                         checkpointing0 = gr.Checkbox(label=translations["memory_efficient_training"], value=False, interactive=True)     
-                        proposal_pitch = gr.Checkbox(label=translations["proposal_pitch"], value=False, interactive=True)
+                        auto_pitch = gr.Checkbox(label=translations["proposal_pitch"], value=False, interactive=True)
                 with gr.Column():
                     resample_sr0 = gr.Radio(choices=[0]+sample_rate_choice, label=translations["resample"], info=translations["resample_info"], value=0, interactive=True)
-                    proposal_pitch_threshold = gr.Slider(minimum=50.0, maximum=1200.0, label=translations["proposal_pitch_threshold"], info=translations["proposal_pitch_threshold_info"], value=255.0, step=0.1, interactive=True, visible=proposal_pitch.value)
+                    #proposal_pitch_threshold = gr.Slider(minimum=50.0, maximum=1200.0, label=translations["proposal_pitch_threshold"], info=translations["proposal_pitch_threshold_info"], value=255.0, step=0.1, interactive=True, visible=proposal_pitch.value)
                     f0_autotune_strength0 = gr.Slider(minimum=0, maximum=1, label=translations["autotune_rate"], info=translations["autotune_rate_info"], value=1, step=0.1, interactive=True, visible=autotune3.value)
                     clean_strength1 = gr.Slider(label=translations["clean_strength"], info=translations["clean_strength_info"], minimum=0, maximum=1, value=0.5, step=0.1, interactive=True, visible=cleaner1.value)
                     filter_radius0 = gr.Slider(minimum=0, maximum=7, label=translations["filter_radius"], info=translations["filter_radius_info"], value=3, step=1, interactive=True)
@@ -92,7 +92,7 @@ def convert_tts_tab():
         tts_voice_audio = gr.Audio(show_download_button=True, interactive=False, label=translations["output_text_to_speech"])
         tts_voice_convert = gr.Audio(show_download_button=True, interactive=False, label=translations["output_file_tts_convert"])
     with gr.Row():
-        proposal_pitch.change(fn=visible, inputs=[proposal_pitch], outputs=[proposal_pitch_threshold])
+        #proposal_pitch.change(fn=visible, inputs=[proposal_pitch], outputs=[proposal_pitch_threshold])
         translate_button.click(fn=google_translate, inputs=[prompt, source_lang, target_lang], outputs=[prompt], api_name="google_translate")
     with gr.Row():
         unlock_full_method3.change(fn=unlock_f0, inputs=[unlock_full_method3], outputs=[method0])
@@ -161,8 +161,8 @@ def convert_tts_tab():
                 formant_timbre1,
                 f0_file_dropdown0,
                 embed_mode1,
-                proposal_pitch, 
-                proposal_pitch_threshold
+                auto_pitch, 
+               # proposal_pitch_threshold
             ],
             outputs=[tts_voice_convert],
             api_name="convert_tts"
